@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AvaloniaTests.Views.MainWindow"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterOwner"
+		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
+        Title="Ебаный Тест"
+        x:Name="root"
+        Background="#FFF5E6CC"
+        Foreground="Black">
+
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Spacing="16" Margin="16,16,16,16" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Button Content="Начать" Command="{Binding StartTestCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
+            <Button Content="Создать" Command="{Binding CreateTestCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
+            <Button Content="Список" Command="{Binding OpenTestListCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
+            <Button Content="Результаты" Command="{Binding OpenResultsTabCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
+        </StackPanel>
+    </DockPanel>
+</Window>

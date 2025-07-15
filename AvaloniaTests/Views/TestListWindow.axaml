@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="AvaloniaTests.Views.TestListWindow"
+        Title="Список тестов"
+		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
+		Background="#FFF5E6CC"
+        Foreground="Black"
+        Width="600" Height="500"
+        WindowStartupLocation="CenterOwner">
+    <StackPanel>
+        <TextBlock Text="Список тестов" FontWeight="Bold" Margin="10"/>
+        <Button Content="Создать новый тест" Margin="10" Command="{Binding CreateTestCommand}" Foreground="Black" HorizontalAlignment="Left"/>
+        <DataGrid ItemsSource="{Binding Tests}" AutoGenerateColumns="False" Margin="10" x:Name="TestGrid" SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Название" Binding="{Binding Title}"/>
+                <DataGridTextColumn Header="Описание" Binding="{Binding Description}"/>
+                <DataGridTextColumn Header="Вопросов" Binding="{Binding Questions.Count}"/>
+                <DataGridTemplateColumn Header="Действия">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Button Content="Редактировать" Command="{Binding DataContext.EditTestCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                                <Button Content="Удалить" Command="{Binding DataContext.DeleteTestCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                                <Button Content="Пройти" Command="{Binding DataContext.SelectTestCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" Spacing="10">
+            <Button Content="Обновить" Command="{Binding RefreshCommand}" Foreground="Black"/>
+            <Button Content="Закрыть" Command="{Binding CloseCommand}" Foreground="Black"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,71 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="AvaloniaTests.Views.TestEditorWindow"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterOwner"
+        x:DataType="vm:TestEditorViewModel"
+        xmlns:vm="clr-namespace:AvaloniaTests.ViewModels"
+        xmlns:converters="clr-namespace:AvaloniaTests.Converters"
+		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
+        Title="Ебучее Создание Теста"
+		Background="#FFF5E6CC"
+        Foreground="Black">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="5">
+            <TextBlock Text="Название теста:" FontWeight="Bold"/>
+            <TextBox Text="{Binding EditingTest.Title}"/>
+            <TextBlock Text="Описание:" FontWeight="Bold"/>
+            <TextBox Text="{Binding EditingTest.Description}" AcceptsReturn="True" Height="60"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+            <TextBlock Text="Список вопросов" FontWeight="Bold"/>
+            <ItemsControl ItemsSource="{Binding EditingTest.Questions}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" Margin="0,5,0,5" Padding="5">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Text}" FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Vertical" Margin="0,5,0,0">
+                                    <ItemsControl ItemsSource="{Binding Answers}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                                    <RadioButton IsChecked="{Binding Id, Converter={x:Static converters:EqualityConverter.Instance}, 
+																 ConverterParameter={Binding $parent[StackPanel].DataContext.CorrectAnswerId}}" 
+																 IsHitTestVisible="False"/>
+                                                    <TextBlock Text="{Binding Text}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Margin="0,5,0,0">
+                                    <Button Content="✏️" Command="{Binding $parent[Window].DataContext.EditQuestionCommand}" 
+											CommandParameter="{Binding}"/>
+                                    <Button Content="❌" Command="{Binding $parent[Window].DataContext.RemoveQuestionCommand}" 
+											CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+            <Button Content="Добавить вопрос" Command="{Binding AddQuestionCommand}" Foreground="Black"/>
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" Foreground="Black"/>
+        </StackPanel>
+    </Grid>
+</Window>
