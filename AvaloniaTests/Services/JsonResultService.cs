@@ -29,19 +29,14 @@ namespace AvaloniaTests.Services
             
             _resultsFilePath = Path.Combine(appDataPath, "results.json");
             
-            System.Diagnostics.Debug.WriteLine($"JsonResultService: Путь к файлу результатов: {_resultsFilePath}");
-            
             if (!File.Exists(_resultsFilePath))
             {
-                System.Diagnostics.Debug.WriteLine("JsonResultService: Файл в AppData не найден, ищем в других местах");
-                
                 var exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? "";
                 var appJsonPath = Path.Combine(exeDir, "results.json");
                 
                 if (File.Exists(appJsonPath))
                 {
                     File.Copy(appJsonPath, _resultsFilePath, true);
-                    System.Diagnostics.Debug.WriteLine($"JsonResultService: Скопирован файл из {appJsonPath}");
                 }
                 else
                 {
@@ -49,7 +44,6 @@ namespace AvaloniaTests.Services
                     if (File.Exists(sourceJsonPath))
                     {
                         File.Copy(sourceJsonPath, _resultsFilePath, true);
-                        System.Diagnostics.Debug.WriteLine($"JsonResultService: Скопирован файл из {sourceJsonPath}");
                     }
                     else
                     {
@@ -57,7 +51,6 @@ namespace AvaloniaTests.Services
                         if (File.Exists(projectPath))
                         {
                             File.Copy(projectPath, _resultsFilePath, true);
-                            System.Diagnostics.Debug.WriteLine($"JsonResultService: Скопирован файл из {projectPath}");
                         }
                         else
                         {
@@ -75,7 +68,6 @@ namespace AvaloniaTests.Services
                                 if (File.Exists(path))
                                 {
                                     File.Copy(path, _resultsFilePath, true);
-                                    System.Diagnostics.Debug.WriteLine($"JsonResultService: Скопирован файл из {path}");
                                     found = true;
                                     break;
                                 }
@@ -83,7 +75,6 @@ namespace AvaloniaTests.Services
 
                             if (!found)
                             {
-                                System.Diagnostics.Debug.WriteLine("JsonResultService: Файл результатов не найден нигде, создаем новый");
                                 _results = new List<TestResult>();
                                 SaveResults();
                                 return;
@@ -92,29 +83,17 @@ namespace AvaloniaTests.Services
                     }
                 }
             }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("JsonResultService: Файл найден в AppData");
-            }
             
             LoadResults();
-            
-            System.Diagnostics.Debug.WriteLine($"JsonResultService: Инициализация завершена. Загружено {_results.Count} результатов");
         }
 
         public List<TestResult> GetResults() 
         {
-            System.Diagnostics.Debug.WriteLine($"JsonResultService.GetResults: Возвращаем {_results.Count} результатов");
             return new List<TestResult>(_results);
         }
 
         public void SaveResult(TestResult result)
         {
-            System.Diagnostics.Debug.WriteLine($"JsonResultService.SaveResult: Сохраняем результат теста {result.TestId}");
-            System.Diagnostics.Debug.WriteLine($"  - Пользователь: {result.UserName}");
-            System.Diagnostics.Debug.WriteLine($"  - Счет: {result.Score}/{result.MaxScore}");
-            System.Diagnostics.Debug.WriteLine($"  - Дата: {result.CompletionDate}");
-            
             if (result.Id == Guid.Empty)
             {
                 result.Id = Guid.NewGuid();
@@ -124,8 +103,6 @@ namespace AvaloniaTests.Services
             
             _results.Add(result);
             SaveResults();
-            
-            System.Diagnostics.Debug.WriteLine($"JsonResultService.SaveResult: Результат сохранен. Всего результатов: {_results.Count}");
         }
 
         public void DeleteResult(Guid resultId)
@@ -135,11 +112,6 @@ namespace AvaloniaTests.Services
             {
                 _results.Remove(result);
                 SaveResults();
-                System.Diagnostics.Debug.WriteLine($"JsonResultService.DeleteResult: Результат {resultId} удален. Осталось результатов: {_results.Count}");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"JsonResultService.DeleteResult: Результат {resultId} не найден");
             }
         }
 
@@ -161,11 +133,9 @@ namespace AvaloniaTests.Services
             try
             {
                 var json = File.ReadAllText(_resultsFilePath, System.Text.Encoding.UTF8);
-                System.Diagnostics.Debug.WriteLine($"JsonResultService.LoadResults: Прочитано {json.Length} символов из файла");
                 
                 if (string.IsNullOrWhiteSpace(json))
                 {
-                    System.Diagnostics.Debug.WriteLine("JsonResultService.LoadResults: Файл пустой");
                     _results = new List<TestResult>();
                     return;
                 }
@@ -178,24 +148,14 @@ namespace AvaloniaTests.Services
                     {
                         result.FixCollections();
                     }
-                    
-                    System.Diagnostics.Debug.WriteLine($"JsonResultService.LoadResults: Успешно десериализовано {_results.Count} результатов");
-                    foreach (var result in _results)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"  - {result.UserName}: {result.Score}/{result.MaxScore} ({result.CompletionDate})");
-                    }
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("JsonResultService.LoadResults: Десериализация вернула null");
                     _results = new List<TestResult>();
                 }
-                
-                System.Diagnostics.Debug.WriteLine($"JsonResultService.LoadResults: Загружено {_results.Count} результатов");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"JsonResultService.LoadResults: Ошибка загрузки: {ex.Message}");
                 Console.WriteLine($"Ошибка загрузки результатов: {ex.Message}");
                 _results = new List<TestResult>();
             }
@@ -213,12 +173,9 @@ namespace AvaloniaTests.Services
                 
                 var json = JsonSerializer.Serialize(_results, JsonOptions);
                 File.WriteAllText(_resultsFilePath, json, System.Text.Encoding.UTF8);
-                
-                System.Diagnostics.Debug.WriteLine($"JsonResultService.SaveResults: Сохранено в файл {_resultsFilePath}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"JsonResultService.SaveResults: Ошибка сохранения: {ex.Message}");
                 Console.WriteLine($"Ошибка сохранения результатов: {ex.Message}");
             }
         }

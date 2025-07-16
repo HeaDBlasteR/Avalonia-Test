@@ -15,13 +15,11 @@
     <ScrollViewer>
         <StackPanel Margin="20" Spacing="15">
             
-            <!-- Заголовок -->
             <TextBlock Text="Результаты прохождения тестов" 
                        FontSize="24" 
                        FontWeight="Bold" 
                        HorizontalAlignment="Center" />
 
-            <!-- Debug информация -->
             <Border Background="LightYellow" Padding="10" CornerRadius="5">
                 <StackPanel>
                     <TextBlock Text="{Binding ResultsCount, StringFormat='Найдено результатов: {0}', FallbackValue='Найдено результатов: 0'}" 
@@ -36,12 +34,10 @@
                 </StackPanel>
             </Border>
 
-            <!-- Простой список результатов -->
             <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="10">
                 <StackPanel>
                     <TextBlock Text="Список результатов:" FontWeight="Bold" Margin="0,0,0,10"/>
                     
-                    <!-- Простая привязка через ItemsControl -->
                     <ItemsControl ItemsSource="{Binding Results}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:TestResultDisplayItem">
@@ -78,7 +74,6 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     
-                    <!-- Сообщение если результатов нет -->
                     <TextBlock Text="Результаты не найдены" 
                                HorizontalAlignment="Center" 
                                Margin="20"
@@ -87,7 +82,6 @@
                 </StackPanel>
             </Border>
 
-            <!-- Тестовая секция с жестко заданными данными -->
             <Border Background="LightCoral" Padding="10" CornerRadius="5">
                 <StackPanel>
                     <TextBlock Text="Тест статических данных:" FontWeight="Bold" Margin="0,0,0,10"/>
@@ -97,7 +91,6 @@
                 </StackPanel>
             </Border>
 
-            <!-- Кнопки управления -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
                 <Button Content="Обновить" 
                         Command="{Binding RefreshCommand}"

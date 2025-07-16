@@ -44,25 +44,11 @@ namespace AvaloniaTests.ViewModels
             RemoveAnswerCommand = ReactiveCommand.Create<Answer>(RemoveAnswer);
             EditQuestionCommand = ReactiveCommand.Create<Question>(EditQuestion);
             SetCorrectAnswerCommand = ReactiveCommand.Create<object[]>(SetCorrectAnswer);
-
-            (SaveCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (AddQuestionCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (RemoveQuestionCommand as ReactiveCommand<Question, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (AddAnswerCommand as ReactiveCommand<Question, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (RemoveAnswerCommand as ReactiveCommand<Answer, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (EditQuestionCommand as ReactiveCommand<Question, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (SetCorrectAnswerCommand as ReactiveCommand<object[], Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-        }
-
-        private void HandleCommandException(Exception ex)
-        {
-            Console.WriteLine($"ошибка команды: {ex.Message}");
         }
 
         private Window GetMainWindow()
         {
-            return (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
-                   ?? throw new InvalidOperationException("Main window not found");
+            return (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow!;
         }
 
         private void SafeSaveTest()

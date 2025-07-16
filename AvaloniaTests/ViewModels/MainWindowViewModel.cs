@@ -45,28 +45,11 @@ namespace AvaloniaTests.ViewModels
             StartTestCommand = ReactiveCommand.Create(OpenStartTestWindow);
             OpenResultsTabCommand = ReactiveCommand.Create(OpenResultsTab);
 
-            (CreateTestCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (EditTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (DeleteTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (TakeTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (ViewResultsCommand as ReactiveCommand<TestResult, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (OpenTestListCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (StartTestCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (OpenResultsTabCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-
             LoadData();
         }
 
-        private void HandleCommandException(Exception ex)
-        {
-            Console.WriteLine($"ошибка команды: {ex.Message}");
-        }
-
-
         private void LoadData()
         {
-            System.Diagnostics.Debug.WriteLine("MainWindowViewModel.LoadData: Загружаем данные");
-            
             Tests.Clear();
             var tests = _testService.GetTests();
             
@@ -77,21 +60,16 @@ namespace AvaloniaTests.ViewModels
 
             Results.Clear();
             var results = _resultService.GetResults();
-            System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.LoadData: Загружено {results.Count} результатов из сервиса");
             
             foreach (var result in results)
             {
                 Results.Add(result);
-                System.Diagnostics.Debug.WriteLine($"  - Результат: {result.UserName}, {result.Score}/{result.MaxScore}, {result.CompletionDate}");
             }
-            
-            System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.LoadData: Общее количество результатов в коллекции: {Results.Count}");
         }
 
         private static Window GetMainWindow()
         {
-            return (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
-                   ?? throw new InvalidOperationException("Main window not found");
+            return (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow!;
         }
 
         private void CreateTest()
@@ -152,21 +130,9 @@ namespace AvaloniaTests.ViewModels
 
         private void OpenResultsTab()
         {
-            System.Diagnostics.Debug.WriteLine("MainWindowViewModel.OpenResultsTab: Открываем окно результатов");
-            
-            try
-            {
-                var resultsListViewModel = new ResultsListViewModel(_resultService, _testService, GetMainWindow());
-                var resultsListWindow = new ResultsListWindow(resultsListViewModel);
-                resultsListWindow.ShowDialog(GetMainWindow());
-                
-                System.Diagnostics.Debug.WriteLine("MainWindowViewModel.OpenResultsTab: Окно результатов успешно открыто");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.OpenResultsTab: Ошибка открытия окна результатов: {ex}");
-                Console.WriteLine($"Ошибка открытия окна результатов: {ex.Message}");
-            }
+            var resultsListViewModel = new ResultsListViewModel(_resultService, _testService, GetMainWindow());
+            var resultsListWindow = new ResultsListWindow(resultsListViewModel);
+            resultsListWindow.ShowDialog(GetMainWindow());
         }
     }
 }

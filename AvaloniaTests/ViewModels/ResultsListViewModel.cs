@@ -8,7 +8,6 @@ using System.Windows.Input;
 using System.Reactive;
 using Avalonia.Controls;
 using System;
-using Avalonia.Threading;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -19,7 +18,6 @@ namespace AvaloniaTests.ViewModels
         private readonly Window? _parentWindow;
         private Window? _currentWindow;
         private int _resultsCount;
-        private bool _isLoading = false;
 
         public ObservableCollection<TestResultDisplayItem> Results { get; } = new();
 
@@ -45,24 +43,12 @@ namespace AvaloniaTests.ViewModels
             CloseCommand = ReactiveCommand.Create(CloseWindow);
             RefreshCommand = ReactiveCommand.Create(LoadResults);
 
-            (ViewResultCommand as ReactiveCommand<TestResultDisplayItem, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (DeleteResultCommand as ReactiveCommand<TestResultDisplayItem, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (CloseCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-            (RefreshCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
-
-            System.Diagnostics.Debug.WriteLine("ResultsListViewModel: Начинаем загрузку результатов в конструкторе");
             LoadResults();
         }
 
         public void SetCurrentWindow(Window window)
         {
             _currentWindow = window;
-        }
-
-        private void HandleCommandException(Exception ex)
-        {
-            Console.WriteLine($"Ошибка команды в ResultsListViewModel: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.HandleCommandException: {ex}");
         }
 
         private void CloseWindow()
@@ -74,104 +60,39 @@ namespace AvaloniaTests.ViewModels
         {
             if (item?.Result != null)
             {
-                try
-                {
-                    _resultService.DeleteResult(item.Result.Id);
-                    Results.Remove(item);
-                    ResultsCount = Results.Count;
-                    System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.DeleteResult: Результат {item.Result.Id} удален");
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.DeleteResult: Ошибка удаления результата: {ex}");
-                    Console.WriteLine($"Ошибка удаления результата: {ex.Message}");
-                }
+                _resultService.DeleteResult(item.Result.Id);
+                Results.Remove(item);
+                ResultsCount = Results.Count;
             }
         }
 
         private void LoadResults()
         {
-            if (_isLoading)
-            {
-                System.Diagnostics.Debug.WriteLine("ResultsListViewModel.LoadResults: Уже выполняется загрузка, пропускаем");
-                return;
-            }
-
-            _isLoading = true;
+            Results.Clear();
             
-            try
+            var results = _resultService.GetResults();
+            var tests = _testService.GetTests();
+
+            foreach (var result in results.OrderByDescending(r => r.CompletionDate))
             {
-                System.Diagnostics.Debug.WriteLine("ResultsListViewModel.LoadResults: Загружаем результаты");
-                
-                Results.Clear();
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: Очистили коллекцию Results, count = {Results.Count}");
-                
-                var results = _resultService.GetResults();
-                var tests = _testService.GetTests();
-
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: Получено {results.Count} результатов из сервиса");
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: Получено {tests.Count} тестов из сервиса");
-
-                if (results.Count == 0)
+                var test = tests.FirstOrDefault(t => t.Id == result.TestId);
+                var displayItem = new TestResultDisplayItem
                 {
-                    System.Diagnostics.Debug.WriteLine("ResultsListViewModel.LoadResults: ВНИМАНИЕ - результатов не найдено!");
-                    ResultsCount = 0;
-                    
-                    // Принудительно уведомляем UI
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        this.RaisePropertyChanged(nameof(Results));
-                        this.RaisePropertyChanged(nameof(ResultsCount));
-                    });
-                    return;
-                }
+                    Result = result,
+                    Test = test,
+                    TestTitle = test?.Title ?? "Неизвестный тест",
+                    UserName = result.UserName,
+                    Score = $"{result.Score}/{result.MaxScore}",
+                    CompletionDate = result.CompletionDate.ToString("dd.MM.yyyy HH:mm"),
+                    Percentage = result.MaxScore > 0 
+                        ? (int)((double)result.Score / result.MaxScore * 100) 
+                        : 0
+                };
+                
+                Results.Add(displayItem);
+            }
 
-                foreach (var result in results.OrderByDescending(r => r.CompletionDate))
-                {
-                    var test = tests.FirstOrDefault(t => t.Id == result.TestId);
-                    var displayItem = new TestResultDisplayItem
-                    {
-                        Result = result,
-                        Test = test,
-                        TestTitle = test?.Title ?? "Неизвестный тест",
-                        UserName = result.UserName,
-                        Score = $"{result.Score}/{result.MaxScore}",
-                        CompletionDate = result.CompletionDate.ToString("dd.MM.yyyy HH:mm"),
-                        Percentage = result.MaxScore > 0 
-                            ? (int)((double)result.Score / result.MaxScore * 100) 
-                            : 0
-                    };
-                    
-                    Results.Add(displayItem);
-                    System.Diagnostics.Debug.WriteLine($"  - Добавлен результат: UserName='{displayItem.UserName}', TestTitle='{displayItem.TestTitle}', Score='{displayItem.Score}', CompletionDate='{displayItem.CompletionDate}', Percentage={displayItem.Percentage}");
-                }
-
-                ResultsCount = Results.Count;
-                
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: ИТОГ загрузки - Results.Count = {Results.Count}, ResultsCount = {ResultsCount}");
-                
-                // Принудительно уведомляем UI об изменениях
-                this.RaisePropertyChanged(nameof(Results));
-                this.RaisePropertyChanged(nameof(ResultsCount));
-                
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: Уведомили UI, финальная проверка - Results.Count = {Results.Count}");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: ОШИБКА при загрузке результатов: {ex}");
-                Console.WriteLine($"Ошибка загрузки результатов: {ex.Message}");
-                
-                Results.Clear();
-                ResultsCount = 0;
-                
-                // Уведомляем об ошибке
-                this.RaisePropertyChanged(nameof(Results));
-                this.RaisePropertyChanged(nameof(ResultsCount));
-            }
-            finally
-            {
-                _isLoading = false;
-            }
+            ResultsCount = Results.Count;
         }
 
         private void ViewResult(TestResultDisplayItem item)
