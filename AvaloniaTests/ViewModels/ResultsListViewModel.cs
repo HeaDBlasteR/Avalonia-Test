@@ -6,7 +6,6 @@ using System.Linq;
 using ReactiveUI;
 using System.Windows.Input;
 using Avalonia.Controls;
-using Avalonia.Layout;
 using System;
 using System.Reactive;
 

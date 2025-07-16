@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using System;
 
 namespace AvaloniaTests.Services
 {
@@ -94,7 +93,6 @@ namespace AvaloniaTests.Services
             }
             catch
             {
-                // ≈сли показ диалога тоже падает, ничего не делаем
             }
         }
 

@@ -37,7 +37,6 @@ namespace AvaloniaTests.Converters
             if (value == null || parameter == null)
                 return false;
 
-            // Если конвертируем в кисть для фона
             if (targetType == typeof(Avalonia.Media.Brush) || targetType == typeof(Avalonia.Media.IBrush))
             {
                 bool isEqual = value.Equals(parameter);
@@ -46,7 +45,6 @@ namespace AvaloniaTests.Converters
                     new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#BDC3C7"));
             }
 
-            // Обычное сравнение
             return value.Equals(parameter);
         }
 
