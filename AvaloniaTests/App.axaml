@@ -11,5 +11,33 @@
 
 	<Application.Styles>
 		<fluent:FluentTheme />
+		
+		<Style Selector="Window">
+			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
+		</Style>
+		
+		<Style Selector="TextBlock">
+			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
+		</Style>
+		
+		<Style Selector="TextBox">
+			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
+		</Style>
+		
+		<Style Selector="Button">
+			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
+		</Style>
+		
+		<Style Selector="DataGrid">
+			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
+		</Style>
+		
+		<Style Selector="DataGridColumnHeader">
+			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
+		</Style>
+		
+		<Style Selector="DataGridCell">
+			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
+		</Style>
 	</Application.Styles>
 </Application>

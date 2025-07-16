@@ -1,0 +1,95 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AvaloniaTests.Views.ResultsListWindow"
+        x:DataType="vm:ResultsListViewModel"
+        xmlns:vm="clr-namespace:AvaloniaTests.ViewModels"
+        Width="800"
+        Height="600"
+        WindowStartupLocation="CenterOwner"
+        Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
+        Title="Результаты тестов"
+        Background="#FFF5E6CC"
+        Foreground="Black"
+        FontFamily="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" 
+                   Text="Результаты прохождения тестов" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,20"/>
+
+        <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding Results}" 
+                  AutoGenerateColumns="False" 
+                  IsReadOnly="True"
+                  GridLinesVisibility="All"
+                  Background="White"
+                  SelectionMode="Single">
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Пользователь" 
+                                    Binding="{Binding UserName}" 
+                                    Width="150"/>
+                
+                <DataGridTextColumn Header="Тест" 
+                                    Binding="{Binding TestTitle}" 
+                                    Width="200"/>
+                
+                <DataGridTextColumn Header="Результат" 
+                                    Binding="{Binding Score}" 
+                                    Width="100"/>
+                
+                <DataGridTextColumn Header="Процент" 
+                                    Binding="{Binding Percentage, StringFormat={}%}" 
+                                    Width="80"/>
+                
+                <DataGridTextColumn Header="Дата прохождения" 
+                                    Binding="{Binding CompletionDate}" 
+                                    Width="150"/>
+                
+                <DataGridTemplateColumn Header="Действия" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Подробно" 
+                                    Command="{Binding $parent[DataGrid].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
+                                    CommandParameter="{Binding}"
+                                    Background="#FF4CAF50"
+                                    Foreground="White"
+                                    Margin="5"
+                                    Padding="10,5"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,20,0,0" 
+                    Spacing="10">
+            
+            <Button Content="Обновить" 
+                    Command="{Binding RefreshCommand}"
+                    Background="#FF2196F3"
+                    Foreground="White"
+                    Padding="20,10"
+                    FontSize="14"/>
+            
+            <Button Content="Закрыть" 
+                    Command="{Binding CloseCommand}"
+                    Background="#FF757575"
+                    Foreground="White"
+                    Padding="20,10"
+                    FontSize="14"/>
+        </StackPanel>
+    </Grid>
+</Window>

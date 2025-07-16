@@ -77,13 +77,15 @@ namespace AvaloniaTests.ViewModels
 
             Results.Clear();
             var results = _resultService.GetResults();
-            System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.LoadData: Загружено {results.Count} результатов");
+            System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.LoadData: Загружено {results.Count} результатов из сервиса");
             
             foreach (var result in results)
             {
                 Results.Add(result);
                 System.Diagnostics.Debug.WriteLine($"  - Результат: {result.UserName}, {result.Score}/{result.MaxScore}, {result.CompletionDate}");
             }
+            
+            System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.LoadData: Общее количество результатов в коллекции: {Results.Count}");
         }
 
         private static Window GetMainWindow()
@@ -150,14 +152,20 @@ namespace AvaloniaTests.ViewModels
 
         private void OpenResultsTab()
         {
-            var results = _resultService.GetResults();
-            var tests = _testService.GetTests();
-            foreach (var result in results)
+            System.Diagnostics.Debug.WriteLine("MainWindowViewModel.OpenResultsTab: Открываем окно результатов");
+            
+            try
             {
-                var test = tests.FirstOrDefault(t => t.Id == result.TestId);
-                var resultViewModel = new ResultViewModel(result, test);
-                var resultWindow = new ResultWindow(resultViewModel);
-                resultWindow.ShowDialog(GetMainWindow());
+                var resultsListViewModel = new ResultsListViewModel(_resultService, _testService, GetMainWindow());
+                var resultsListWindow = new ResultsListWindow(resultsListViewModel);
+                resultsListWindow.ShowDialog(GetMainWindow());
+                
+                System.Diagnostics.Debug.WriteLine("MainWindowViewModel.OpenResultsTab: Окно результатов успешно открыто");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.OpenResultsTab: Ошибка открытия окна результатов: {ex}");
+                Console.WriteLine($"Ошибка открытия окна результатов: {ex.Message}");
             }
         }
     }
