@@ -21,12 +21,10 @@ namespace AvaloniaTests.Services
 
         public JsonResultService()
         {
-            // Устанавливаем путь к файлу результатов в папке проекта
             _resultsFilePath = @"C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\results.json";
             
             System.Diagnostics.Debug.WriteLine($"JsonResultService: Путь к файлу результатов: {_resultsFilePath}");
             
-            // Убеждаемся, что папка существует
             var directory = Path.GetDirectoryName(_resultsFilePath);
             if (!Directory.Exists(directory))
             {
@@ -34,7 +32,6 @@ namespace AvaloniaTests.Services
                 System.Diagnostics.Debug.WriteLine($"JsonResultService: Создана папка {directory}");
             }
             
-            // Если файл не существует, создаем пустой
             if (!File.Exists(_resultsFilePath))
             {
                 System.Diagnostics.Debug.WriteLine("JsonResultService: Файл результатов не найден, создаем новый");
@@ -56,13 +53,11 @@ namespace AvaloniaTests.Services
             System.Diagnostics.Debug.WriteLine($"  - Счет: {result.Score}/{result.MaxScore}");
             System.Diagnostics.Debug.WriteLine($"  - Дата: {result.CompletionDate}");
             
-            // Убеждаемся, что результат имеет ID
             if (result.Id == Guid.Empty)
             {
                 result.Id = Guid.NewGuid();
             }
             
-            // Проверяем и исправляем коллекции
             result.FixCollections();
             
             _results.Add(result);
