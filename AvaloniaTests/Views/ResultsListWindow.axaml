@@ -3,8 +3,8 @@
         x:Class="AvaloniaTests.Views.ResultsListWindow"
         x:DataType="vm:ResultsListViewModel"
         xmlns:vm="clr-namespace:AvaloniaTests.ViewModels"
-        Width="850"
-        Height="600"
+        Width="950"
+        Height="650"
         WindowStartupLocation="CenterOwner"
         Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
         Title="Результаты тестов"
@@ -12,112 +12,108 @@
         Foreground="Black"
         FontFamily="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter">
 
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <TextBlock Grid.Row="0" 
-                   Text="Результаты прохождения тестов" 
-                   FontSize="24" 
-                   FontWeight="Bold" 
-                   HorizontalAlignment="Center" 
-                   Margin="0,0,0,20"/>
-
-        <!-- Results Count -->
-        <TextBlock Grid.Row="1" 
-                   Text="{Binding ResultsCount, StringFormat='Найдено результатов: {0}', FallbackValue='Найдено результатов: 0'}" 
-                   HorizontalAlignment="Center" 
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,15"/>
-
-        <DataGrid Grid.Row="2" 
-                  Name="ResultsDataGrid"
-                  ItemsSource="{Binding Results}" 
-                  AutoGenerateColumns="False" 
-                  IsReadOnly="True"
-                  GridLinesVisibility="All"
-                  Background="White"
-                  SelectionMode="Single"
-                  CanUserReorderColumns="False"
-                  CanUserResizeColumns="True"
-                  CanUserSortColumns="False">
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="15">
             
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Пользователь" 
-                                    Binding="{Binding UserName}" 
-                                    Width="120"
-                                    IsReadOnly="True"/>
-                
-                <DataGridTextColumn Header="Тест" 
-                                    Binding="{Binding TestTitle}" 
-                                    Width="180"
-                                    IsReadOnly="True"/>
-                
-                <DataGridTextColumn Header="Результат" 
-                                    Binding="{Binding Score}" 
-                                    Width="80"
-                                    IsReadOnly="True"/>
-                
-                <DataGridTextColumn Header="Процент" 
-                                    Binding="{Binding Percentage, StringFormat={}{0}%}" 
-                                    Width="70"
-                                    IsReadOnly="True"/>
-                
-                <DataGridTextColumn Header="Дата прохождения" 
-                                    Binding="{Binding CompletionDate}" 
-                                    Width="130"
-                                    IsReadOnly="True"/>
-                
-                <DataGridTemplateColumn Header="Действия" Width="180">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="vm:TestResultDisplayItem">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <Button Content="Подробно" 
-                                        Command="{Binding $parent[DataGrid].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
-                                        CommandParameter="{Binding}"
-                                        Background="#FF4CAF50"
-                                        Foreground="White"
-                                        Margin="2"
-                                        Padding="8,4"
-                                        FontSize="12"/>
-                                <Button Content="Удалить" 
-                                        Command="{Binding $parent[DataGrid].((vm:ResultsListViewModel)DataContext).DeleteResultCommand}"
-                                        CommandParameter="{Binding}"
-                                        Background="#FFF44336"
-                                        Foreground="White"
-                                        Margin="2"
-                                        Padding="8,4"
-                                        FontSize="12"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+            <!-- Заголовок -->
+            <TextBlock Text="Результаты прохождения тестов" 
+                       FontSize="24" 
+                       FontWeight="Bold" 
+                       HorizontalAlignment="Center" />
 
-        <StackPanel Grid.Row="3" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center" 
-                    Margin="0,20,0,0" 
-                    Spacing="10">
-            
-            <Button Content="Обновить" 
-                    Command="{Binding RefreshCommand}"
-                    Background="#FF2196F3"
-                    Foreground="White"
-                    Padding="20,10"
-                    FontSize="14"/>
-            
-            <Button Content="Закрыть" 
-                    Command="{Binding CloseCommand}"
-                    Background="#FF757575"
-                    Foreground="White"
-                    Padding="20,10"
-                    FontSize="14"/>
+            <!-- Debug информация -->
+            <Border Background="LightYellow" Padding="10" CornerRadius="5">
+                <StackPanel>
+                    <TextBlock Text="{Binding ResultsCount, StringFormat='Найдено результатов: {0}', FallbackValue='Найдено результатов: 0'}" 
+                               FontWeight="Bold" HorizontalAlignment="Center"/>
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
+                        <TextBlock Text="Debug: Results.Count = " />
+                        <TextBlock Text="{Binding Results.Count, FallbackValue='NULL'}" FontWeight="Bold" />
+                        <TextBlock Text=", ResultsCount = " Margin="10,0,0,0" />
+                        <TextBlock Text="{Binding ResultsCount, FallbackValue='NULL'}" FontWeight="Bold" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Простой список результатов -->
+            <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="10">
+                <StackPanel>
+                    <TextBlock Text="Список результатов:" FontWeight="Bold" Margin="0,0,0,10"/>
+                    
+                    <!-- Простая привязка через ItemsControl -->
+                    <ItemsControl ItemsSource="{Binding Results}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:TestResultDisplayItem">
+                                <Border Background="LightBlue" Margin="0,2" Padding="10,5" CornerRadius="3">
+                                    <StackPanel Orientation="Horizontal" Spacing="15">
+                                        <TextBlock Text="👤" />
+                                        <TextBlock Text="{Binding UserName}" FontWeight="Bold" MinWidth="80"/>
+                                        <TextBlock Text="📝" />
+                                        <TextBlock Text="{Binding TestTitle}" MinWidth="120"/>
+                                        <TextBlock Text="🎯" />
+                                        <TextBlock Text="{Binding Score}" MinWidth="50"/>
+                                        <TextBlock Text="📅" />
+                                        <TextBlock Text="{Binding CompletionDate}" MinWidth="100"/>
+                                        
+                                        <Button Content="👁️ Подробно" 
+                                                Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
+                                                CommandParameter="{Binding}"
+                                                Background="#FF4CAF50"
+                                                Foreground="White"
+                                                Padding="5,2"
+                                                FontSize="10"
+                                                Margin="10,0,0,0"/>
+                                        
+                                        <Button Content="🗑️ Удалить" 
+                                                Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).DeleteResultCommand}"
+                                                CommandParameter="{Binding}"
+                                                Background="#FFF44336"
+                                                Foreground="White"
+                                                Padding="5,2"
+                                                FontSize="10"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    
+                    <!-- Сообщение если результатов нет -->
+                    <TextBlock Text="Результаты не найдены" 
+                               HorizontalAlignment="Center" 
+                               Margin="20"
+                               FontStyle="Italic"
+                               Name="NoResultsMessage"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Тестовая секция с жестко заданными данными -->
+            <Border Background="LightCoral" Padding="10" CornerRadius="5">
+                <StackPanel>
+                    <TextBlock Text="Тест статических данных:" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Пользователь: nozdr, Тест: Test 1, Результат: 3/3" />
+                    <TextBlock Text="Пользователь: nozdr, Тест: Test 2, Результат: 1/1" />
+                    <TextBlock Text="Пользователь: nozdr, Тест: Test 3, Результат: 1/1" />
+                </StackPanel>
+            </Border>
+
+            <!-- Кнопки управления -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                <Button Content="Обновить" 
+                        Command="{Binding RefreshCommand}"
+                        Background="#FF2196F3"
+                        Foreground="White"
+                        Padding="20,10"
+                        FontSize="14"/>
+                
+                <Button Content="Закрыть" 
+                        Command="{Binding CloseCommand}"
+                        Background="#FF757575"
+                        Foreground="White"
+                        Padding="20,10"
+                        FontSize="14"/>
+            </StackPanel>
+
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </Window>

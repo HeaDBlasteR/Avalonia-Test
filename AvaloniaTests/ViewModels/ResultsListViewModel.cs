@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Reactive;
 using Avalonia.Controls;
 using System;
+using Avalonia.Threading;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -18,6 +19,7 @@ namespace AvaloniaTests.ViewModels
         private readonly Window? _parentWindow;
         private Window? _currentWindow;
         private int _resultsCount;
+        private bool _isLoading = false;
 
         public ObservableCollection<TestResultDisplayItem> Results { get; } = new();
 
@@ -89,11 +91,20 @@ namespace AvaloniaTests.ViewModels
 
         private void LoadResults()
         {
+            if (_isLoading)
+            {
+                System.Diagnostics.Debug.WriteLine("ResultsListViewModel.LoadResults: Уже выполняется загрузка, пропускаем");
+                return;
+            }
+
+            _isLoading = true;
+            
             try
             {
                 System.Diagnostics.Debug.WriteLine("ResultsListViewModel.LoadResults: Загружаем результаты");
                 
                 Results.Clear();
+                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: Очистили коллекцию Results, count = {Results.Count}");
                 
                 var results = _resultService.GetResults();
                 var tests = _testService.GetTests();
@@ -105,6 +116,13 @@ namespace AvaloniaTests.ViewModels
                 {
                     System.Diagnostics.Debug.WriteLine("ResultsListViewModel.LoadResults: ВНИМАНИЕ - результатов не найдено!");
                     ResultsCount = 0;
+                    
+                    // Принудительно уведомляем UI
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        this.RaisePropertyChanged(nameof(Results));
+                        this.RaisePropertyChanged(nameof(ResultsCount));
+                    });
                     return;
                 }
 
@@ -123,26 +141,20 @@ namespace AvaloniaTests.ViewModels
                             ? (int)((double)result.Score / result.MaxScore * 100) 
                             : 0
                     };
-                    Results.Add(displayItem);
                     
+                    Results.Add(displayItem);
                     System.Diagnostics.Debug.WriteLine($"  - Добавлен результат: UserName='{displayItem.UserName}', TestTitle='{displayItem.TestTitle}', Score='{displayItem.Score}', CompletionDate='{displayItem.CompletionDate}', Percentage={displayItem.Percentage}");
                 }
 
                 ResultsCount = Results.Count;
                 
+                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: ИТОГ загрузки - Results.Count = {Results.Count}, ResultsCount = {ResultsCount}");
+                
                 // Принудительно уведомляем UI об изменениях
                 this.RaisePropertyChanged(nameof(Results));
                 this.RaisePropertyChanged(nameof(ResultsCount));
                 
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: ФИНАЛ - загружено {Results.Count} результатов, уведомили UI");
-                
-                // Дополнительная проверка содержимого коллекции
-                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: Проверка коллекции Results:");
-                for (int i = 0; i < Results.Count; i++)
-                {
-                    var item = Results[i];
-                    System.Diagnostics.Debug.WriteLine($"  [{i}] UserName='{item?.UserName}', TestTitle='{item?.TestTitle}', Score='{item?.Score}'");
-                }
+                System.Diagnostics.Debug.WriteLine($"ResultsListViewModel.LoadResults: Уведомили UI, финальная проверка - Results.Count = {Results.Count}");
             }
             catch (Exception ex)
             {
@@ -151,6 +163,14 @@ namespace AvaloniaTests.ViewModels
                 
                 Results.Clear();
                 ResultsCount = 0;
+                
+                // Уведомляем об ошибке
+                this.RaisePropertyChanged(nameof(Results));
+                this.RaisePropertyChanged(nameof(ResultsCount));
+            }
+            finally
+            {
+                _isLoading = false;
             }
         }
 
