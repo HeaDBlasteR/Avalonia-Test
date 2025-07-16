@@ -27,4 +27,32 @@ namespace AvaloniaTests.Converters
             throw new NotImplementedException();
         }
     }
+
+    public class EqualityConverter : IValueConverter
+    {
+        public static EqualityConverter Instance { get; } = new();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || parameter == null)
+                return false;
+
+            // Если конвертируем в кисть для фона
+            if (targetType == typeof(Avalonia.Media.Brush) || targetType == typeof(Avalonia.Media.IBrush))
+            {
+                bool isEqual = value.Equals(parameter);
+                return isEqual ? 
+                    new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#27AE60")) : 
+                    new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#BDC3C7"));
+            }
+
+            // Обычное сравнение
+            return value.Equals(parameter);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

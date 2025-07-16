@@ -130,54 +130,39 @@ namespace AvaloniaTests.Services
                 return;
             }
 
-            try
+            var json = File.ReadAllText(_resultsFilePath, System.Text.Encoding.UTF8);
+            
+            if (string.IsNullOrWhiteSpace(json))
             {
-                var json = File.ReadAllText(_resultsFilePath, System.Text.Encoding.UTF8);
-                
-                if (string.IsNullOrWhiteSpace(json))
-                {
-                    _results = new List<TestResult>();
-                    return;
-                }
+                _results = new List<TestResult>();
+                return;
+            }
 
-                var loadedResults = JsonSerializer.Deserialize<List<TestResult>>(json, JsonOptions);
-                if (loadedResults != null)
+            var loadedResults = JsonSerializer.Deserialize<List<TestResult>>(json, JsonOptions);
+            if (loadedResults != null)
+            {
+                _results = loadedResults.Where(r => r != null).ToList();
+                foreach (var result in _results)
                 {
-                    _results = loadedResults.Where(r => r != null).ToList();
-                    foreach (var result in _results)
-                    {
-                        result.FixCollections();
-                    }
-                }
-                else
-                {
-                    _results = new List<TestResult>();
+                    result.FixCollections();
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine($"Ошибка загрузки результатов: {ex.Message}");
                 _results = new List<TestResult>();
             }
         }
 
         private void SaveResults()
         {
-            try
+            var directory = Path.GetDirectoryName(_resultsFilePath);
+            if (!Directory.Exists(directory))
             {
-                var directory = Path.GetDirectoryName(_resultsFilePath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory!);
-                }
-                
-                var json = JsonSerializer.Serialize(_results, JsonOptions);
-                File.WriteAllText(_resultsFilePath, json, System.Text.Encoding.UTF8);
+                Directory.CreateDirectory(directory!);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка сохранения результатов: {ex.Message}");
-            }
+            
+            var json = JsonSerializer.Serialize(_results, JsonOptions);
+            File.WriteAllText(_resultsFilePath, json, System.Text.Encoding.UTF8);
         }
     }
 }

@@ -3,18 +3,125 @@
         x:Class="AvaloniaTests.Views.MainWindow"
         WindowState="Maximized"
         WindowStartupLocation="CenterOwner"
-		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
-        Title="Ебаный Тест"
-        x:Name="root"
-        Background="#FFF5E6CC"
-        Foreground="Black">
+		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
+        Title="Ебучая Система Тестирования"
+        x:Name="root">
 
-    <DockPanel>
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Spacing="16" Margin="16,16,16,16" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Button Content="Начать" Command="{Binding StartTestCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
-            <Button Content="Создать" Command="{Binding CreateTestCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
-            <Button Content="Список" Command="{Binding OpenTestListCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
-            <Button Content="Результаты" Command="{Binding OpenResultsTabCommand}" Foreground="Black" FontWeight="Bold" FontSize="24" Padding="24,12" Margin="8,0"/>
-        </StackPanel>
-    </DockPanel>
+    <Window.Background>
+        <ImageBrush Source="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\photo.jpg" 
+                    Stretch="UniformToFill"/>
+    </Window.Background>
+
+    <Grid>
+        <Rectangle Fill="Black" Opacity="0.2"/>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,0,0,50">
+                <TextBlock Text="🎓 Система тестирования знаний" 
+                           FontSize="48" 
+                           FontWeight="Bold" 
+                           Foreground="White" 
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Проверьте свои знания в интерактивном формате" 
+                           FontSize="20" 
+                           Foreground="LightGray" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,10,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" 
+                        Spacing="30">
+                
+                <Button Command="{Binding StartTestCommand}" 
+                        Width="200" 
+                        Height="100" 
+                        CornerRadius="15">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#4CAF50" Offset="0"/>
+                            <GradientStop Color="#45A049" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <TextBlock Text="🚀" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="НАЧАТЬ" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Пройти тест" FontSize="12" Foreground="LightGreen" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Command="{Binding CreateTestCommand}" 
+                        Width="200" 
+                        Height="100" 
+                        CornerRadius="15">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#2196F3" Offset="0"/>
+                            <GradientStop Color="#1976D2" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <TextBlock Text="✏️" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="СОЗДАТЬ" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Новый тест" FontSize="12" Foreground="LightBlue" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Command="{Binding OpenTestListCommand}" 
+                        Width="200" 
+                        Height="100" 
+                        CornerRadius="15">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FF9800" Offset="0"/>
+                            <GradientStop Color="#F57C00" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <TextBlock Text="📋" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="СПИСОК" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Все тесты" FontSize="12" Foreground="LightYellow" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Command="{Binding OpenResultsTabCommand}" 
+                        Width="200" 
+                        Height="100" 
+                        CornerRadius="15">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#9C27B0" Offset="0"/>
+                            <GradientStop Color="#7B1FA2" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <TextBlock Text="📊" FontSize="24" HorizontalAlignment="Center"/>
+                        <TextBlock Text="РЕЗУЛЬТАТЫ" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Статистика" FontSize="12" Foreground="Plum" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" 
+                        VerticalAlignment="Top" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,50,0,0">
+                <TextBlock Text="💡 Выберите действие для начала работы" 
+                           FontSize="16" 
+                           Foreground="White" 
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Window>

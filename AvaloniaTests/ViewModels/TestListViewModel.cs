@@ -3,10 +3,10 @@ using AvaloniaTests.Models;
 using AvaloniaTests.Services;
 using AvaloniaTests.Views;
 using ReactiveUI;
-using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
 using System.Windows.Input;
+using System;
+using System.Reactive;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -23,6 +23,8 @@ namespace AvaloniaTests.ViewModels
             get => _tests;
             set => this.RaiseAndSetIfChanged(ref _tests, value);
         }
+
+        public bool IsSelectMode => _selectMode;
 
         public ICommand EditTestCommand { get; }
         public ICommand DeleteTestCommand { get; }
@@ -45,87 +47,238 @@ namespace AvaloniaTests.ViewModels
             SelectTestCommand = ReactiveCommand.Create<Test>(SelectTest);
             RefreshCommand = ReactiveCommand.Create(Refresh);
 
+            SubscribeToCommandErrors(EditTestCommand);
+            SubscribeToCommandErrors(DeleteTestCommand);
+            SubscribeToCommandErrors(CloseCommand);
+            SubscribeToCommandErrors(CreateTestCommand);
+            SubscribeToCommandErrors(SelectTestCommand);
+            SubscribeToCommandErrors(RefreshCommand);
+
             LoadTests();
+        }
+
+        private void SubscribeToCommandErrors(ICommand command)
+        {
+            if (command is ReactiveCommand<Unit, Unit> reactiveCommand)
+            {
+                reactiveCommand.ThrownExceptions.Subscribe(HandleCommandException);
+            }
+            else if (command is IReactiveCommand reactiveCommandGeneric)
+            {
+                reactiveCommandGeneric.ThrownExceptions.Subscribe(HandleCommandException);
+            }
+        }
+
+        private void HandleCommandException(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Ошибка в команде TestList: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+
+            try
+            {
+                ShowErrorDialog("Ошибка", $"Произошла ошибка: {ex.Message}");
+            }
+            catch
+            {
+            }
+        }
+
+        private void ShowErrorDialog(string title, string message)
+        {
+            try
+            {
+                var errorWindow = new Window
+                {
+                    Title = title,
+                    Width = 400,
+                    Height = 200,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    CanResize = false
+                };
+
+                errorWindow.Background = new Avalonia.Media.LinearGradientBrush
+                {
+                    StartPoint = new Avalonia.RelativePoint(0, 0, Avalonia.RelativeUnit.Relative),
+                    EndPoint = new Avalonia.RelativePoint(1, 1, Avalonia.RelativeUnit.Relative),
+                    GradientStops = 
+                    {
+                        new Avalonia.Media.GradientStop(Avalonia.Media.Color.Parse("#FFE5E5"), 0),
+                        new Avalonia.Media.GradientStop(Avalonia.Media.Color.Parse("#FFCCCC"), 1)
+                    }
+                };
+
+                var content = new StackPanel
+                {
+                    Margin = new Avalonia.Thickness(30),
+                    Spacing = 20,
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
+                };
+
+                var titleText = new TextBlock
+                {
+                    Text = "?? " + title,
+                    FontSize = 18,
+                    FontWeight = Avalonia.Media.FontWeight.Bold,
+                    Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#D32F2F")),
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+                };
+
+                var messageText = new TextBlock
+                {
+                    Text = message,
+                    FontSize = 14,
+                    Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#424242")),
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                    TextWrapping = Avalonia.Media.TextWrapping.Wrap
+                };
+
+                var okButton = new Button
+                {
+                    Content = "OK",
+                    Width = 100,
+                    Height = 35,
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                    Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#D32F2F")),
+                    Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.White),
+                    FontWeight = Avalonia.Media.FontWeight.SemiBold,
+                    CornerRadius = new Avalonia.CornerRadius(8)
+                };
+
+                okButton.Click += (_, __) => errorWindow.Close();
+
+                content.Children.Add(titleText);
+                content.Children.Add(messageText);
+                content.Children.Add(okButton);
+
+                errorWindow.Content = content;
+                errorWindow.ShowDialog(_window);
+            }
+            catch
+            {
+            }
         }
 
         public void LoadTests()
         {
-            var testsFromService = _testService.GetTests();
-
-            Tests.Clear();
-
-            foreach (var test in testsFromService)
+            try
             {
-                if (test.Questions == null)
+                var testsFromService = _testService.GetTests();
+
+                Tests.Clear();
+
+                foreach (var test in testsFromService)
                 {
-                    test.FixCollections();
+                    if (test.Questions == null)
+                    {
+                        test.FixCollections();
+                    }
+                    
+                    Tests.Add(test);
                 }
                 
-                Tests.Add(test);
+                this.RaisePropertyChanged(nameof(Tests));
             }
-            
-            this.RaisePropertyChanged(nameof(Tests));
+            catch (Exception ex)
+            {
+                HandleCommandException(ex);
+            }
         }
 
         public void Refresh()
         {
-            LoadTests();
+            try
+            {
+                LoadTests();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private void CreateTest()
         {
-            var vm = new TestEditorViewModel(_testService);
-            var win = new TestEditorWindow(vm);
-            win.ShowDialog(_window);
-            LoadTests();
+            try
+            {
+                var vm = new TestEditorViewModel(_testService);
+                var win = new TestEditorWindow(vm);
+                win.ShowDialog(_window);
+                LoadTests();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private void EditTest(Test test)
         {
-            var vm = new TestEditorViewModel(_testService, test);
-            var win = new TestEditorWindow(vm);
-            win.ShowDialog(_window);
-            LoadTests();
+            try
+            {
+                var vm = new TestEditorViewModel(_testService, test);
+                var win = new TestEditorWindow(vm);
+                win.ShowDialog(_window);
+                LoadTests();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private void DeleteTest(Test test)
         {
-            _testService.DeleteTest(test.Id);
-            LoadTests();
+            try
+            {
+                _testService.DeleteTest(test.Id);
+                LoadTests();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private void SelectTest(Test test)
         {
-            if (_selectMode && _resultService != null)
+            try
             {
-                if (test.Questions == null || test.Questions.Count == 0)
+                if (_selectMode && _resultService != null)
                 {
-                    return;
-                }
-
-                foreach (var question in test.Questions)
-                {
-                    if (question.Answers == null || question.Answers.Count == 0)
+                    if (test.Questions == null || test.Questions.Count == 0)
                     {
                         return;
                     }
-                }
 
-                var vm = new TestRunnerViewModel(test, _resultService);
-                var win = new TestRunnerWindow(vm);
-                
-                var mainWindow = (Avalonia.Application.Current.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-                if (mainWindow != null)
-                {
-                    win.WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterOwner;
-                    win.ShowDialog(mainWindow);
+                    foreach (var question in test.Questions)
+                    {
+                        if (question.Answers == null || question.Answers.Count == 0)
+                        {
+                            return;
+                        }
+                    }
+
+                    var vm = new TestRunnerViewModel(test, _resultService);
+                    var win = new TestRunnerWindow(vm);
+                    
+                    var mainWindow = (Avalonia.Application.Current.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                    if (mainWindow != null)
+                    {
+                        win.WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterOwner;
+                        win.ShowDialog(mainWindow);
+                    }
+                    else
+                    {
+                        win.Show();
+                    }
+                    
+                    _window.Close();
                 }
-                else
-                {
-                    win.Show();
-                }
-                
-                _window.Close();
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

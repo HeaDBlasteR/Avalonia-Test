@@ -7,10 +7,10 @@ using AvaloniaTests.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System;
-using System.Reactive;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System.Reactive;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -18,6 +18,7 @@ namespace AvaloniaTests.ViewModels
     {
         private readonly ITestService _testService;
         private readonly IResultService _resultService;
+        private readonly IErrorDialogService _errorDialogService;
 
         public ObservableCollection<Test> Tests { get; } = new();
         public ObservableCollection<TestResult> Results { get; } = new();
@@ -31,10 +32,11 @@ namespace AvaloniaTests.ViewModels
         public ICommand StartTestCommand { get; }
         public ICommand OpenResultsTabCommand { get; }
 
-        public MainWindowViewModel(ITestService testService, IResultService resultService)
+        public MainWindowViewModel(ITestService testService, IResultService resultService, IErrorDialogService errorDialogService)
         {
             _testService = testService;
             _resultService = resultService;
+            _errorDialogService = errorDialogService;
 
             CreateTestCommand = ReactiveCommand.Create(CreateTest);
             EditTestCommand = ReactiveCommand.Create<Test>(EditTest);
@@ -45,7 +47,33 @@ namespace AvaloniaTests.ViewModels
             StartTestCommand = ReactiveCommand.Create(OpenStartTestWindow);
             OpenResultsTabCommand = ReactiveCommand.Create(OpenResultsTab);
 
+            SubscribeToCommandErrors(CreateTestCommand);
+            SubscribeToCommandErrors(EditTestCommand);
+            SubscribeToCommandErrors(DeleteTestCommand);
+            SubscribeToCommandErrors(TakeTestCommand);
+            SubscribeToCommandErrors(ViewResultsCommand);
+            SubscribeToCommandErrors(OpenTestListCommand);
+            SubscribeToCommandErrors(StartTestCommand);
+            SubscribeToCommandErrors(OpenResultsTabCommand);
+
             LoadData();
+        }
+
+        private void SubscribeToCommandErrors(ICommand command)
+        {
+            if (command is ReactiveCommand<Unit, Unit> reactiveCommand)
+            {
+                reactiveCommand.ThrownExceptions.Subscribe(HandleCommandException);
+            }
+            else if (command is IReactiveCommand reactiveCommandGeneric)
+            {
+                reactiveCommandGeneric.ThrownExceptions.Subscribe(HandleCommandException);
+            }
+        }
+
+        private void HandleCommandException(Exception ex)
+        {
+            _errorDialogService.ShowError("Ошибка", $"Произошла ошибка: {ex.Message}");
         }
 
         private void LoadData()
@@ -84,7 +112,6 @@ namespace AvaloniaTests.ViewModels
         {
             var editorViewModel = new TestEditorViewModel(_testService, test);
             var editorWindow = new TestEditorWindow(editorViewModel);
-
             editorWindow.ShowDialog(GetMainWindow());
             LoadData();
         }
@@ -100,7 +127,6 @@ namespace AvaloniaTests.ViewModels
             var vmFactory = ServiceProvider.Instance.GetRequiredService<Func<Test, TestRunnerViewModel>>();
             var runnerViewModel = vmFactory(test);
             var runnerWindow = new TestRunnerWindow(runnerViewModel);
-
             runnerWindow.ShowDialog(GetMainWindow());
             LoadData();
         }
@@ -110,7 +136,6 @@ namespace AvaloniaTests.ViewModels
             var test = _testService.GetTests().FirstOrDefault(t => t.Id == result.TestId);
             var resultViewModel = new ResultViewModel(result, test);
             var resultWindow = new ResultWindow(resultViewModel);
-
             resultWindow.ShowDialog(GetMainWindow());
         }
 

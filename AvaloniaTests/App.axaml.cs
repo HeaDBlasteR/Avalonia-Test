@@ -20,6 +20,7 @@ namespace AvaloniaTests
 
             services.AddSingleton<ITestService, JsonTestService>();
             services.AddSingleton<IResultService, JsonResultService>();
+            services.AddSingleton<IErrorDialogService, ErrorDialogService>();
 
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<TestEditorViewModel>();

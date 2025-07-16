@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AvaloniaTests.ViewModels;
+using Avalonia.Interactivity;
 
 namespace AvaloniaTests.Views
 {
@@ -15,6 +16,11 @@ namespace AvaloniaTests.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private void CancelButton_Click(object? sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

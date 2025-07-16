@@ -4,8 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="AvaloniaTests.Views.TestListWindow"
-        Title="Список тестов"
-		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
+        Title="Ебучий Список Тестов"
+		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
 		Background="#FFF5E6CC"
         Foreground="Black"
         Width="800" Height="600"
@@ -50,7 +50,8 @@
                                         <Button Content="Пройти тест" 
                                                 Command="{Binding $parent[Window].DataContext.SelectTestCommand}" 
                                                 CommandParameter="{Binding}"
-                                                Foreground="Black" Background="LightGreen" Padding="5"/>
+                                                Foreground="Black" Background="LightGreen" Padding="5"
+                                                IsVisible="{Binding $parent[Window].DataContext.IsSelectMode}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>

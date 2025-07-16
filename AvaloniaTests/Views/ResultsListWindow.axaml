@@ -6,107 +6,191 @@
         Width="950"
         Height="650"
         WindowStartupLocation="CenterOwner"
-        Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
-        Title="Результаты тестов"
+        Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
+        Title="Ебучие Результаты Тестов"
         Background="#FFF5E6CC"
         Foreground="Black"
         FontFamily="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter">
 
-    <ScrollViewer>
-        <StackPanel Margin="20" Spacing="15">
-            
-            <TextBlock Text="Результаты прохождения тестов" 
-                       FontSize="24" 
-                       FontWeight="Bold" 
-                       HorizontalAlignment="Center" />
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0"
+                   Text="Результаты прохождения тестов" 
+                   FontSize="26" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,20"/>
 
-            <Border Background="LightYellow" Padding="10" CornerRadius="5">
-                <StackPanel>
-                    <TextBlock Text="{Binding ResultsCount, StringFormat='Найдено результатов: {0}', FallbackValue='Найдено результатов: 0'}" 
-                               FontWeight="Bold" HorizontalAlignment="Center"/>
-                    
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
-                        <TextBlock Text="Debug: Results.Count = " />
-                        <TextBlock Text="{Binding Results.Count, FallbackValue='NULL'}" FontWeight="Bold" />
-                        <TextBlock Text=", ResultsCount = " Margin="10,0,0,0" />
-                        <TextBlock Text="{Binding ResultsCount, FallbackValue='NULL'}" FontWeight="Bold" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
+        <Border Grid.Row="1" 
+                Background="#FFFFEB3B" 
+                Padding="15,8" 
+                CornerRadius="8"
+                Margin="0,0,0,15">
+            <TextBlock Text="{Binding ResultsCount, StringFormat='Найдено результатов: {0}', FallbackValue='Найдено результатов: 0'}" 
+                       FontWeight="SemiBold" 
+                       FontSize="16"
+                       HorizontalAlignment="Center"
+                       Foreground="#FF4A4A4A"/>
+        </Border>
 
-            <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="10">
+        <Border Grid.Row="2" 
+                Background="#FF2196F3" 
+                CornerRadius="8,8,0,0" 
+                Padding="15,12"
+                Margin="0,0,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" Text="Пользователь" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                <TextBlock Grid.Column="1" Text="Название теста" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                <TextBlock Grid.Column="2" Text="Результат" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                <TextBlock Grid.Column="3" Text="Процент" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                <TextBlock Grid.Column="4" Text="Дата прохождения" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                <TextBlock Grid.Column="5" Text="              Действия" FontWeight="Bold" Foreground="White" FontSize="14"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="3" 
+                Background="White" 
+                BorderBrush="#FF2196F3" 
+                BorderThickness="2,0,2,2" 
+                CornerRadius="0,0,8,8">
+            <ScrollViewer>
                 <StackPanel>
-                    <TextBlock Text="Список результатов:" FontWeight="Bold" Margin="0,0,0,10"/>
-                    
                     <ItemsControl ItemsSource="{Binding Results}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:TestResultDisplayItem">
-                                <Border Background="LightBlue" Margin="0,2" Padding="10,5" CornerRadius="3">
-                                    <StackPanel Orientation="Horizontal" Spacing="15">
-                                        <TextBlock Text="👤" />
-                                        <TextBlock Text="{Binding UserName}" FontWeight="Bold" MinWidth="80"/>
-                                        <TextBlock Text="📝" />
-                                        <TextBlock Text="{Binding TestTitle}" MinWidth="120"/>
-                                        <TextBlock Text="🎯" />
-                                        <TextBlock Text="{Binding Score}" MinWidth="50"/>
-                                        <TextBlock Text="📅" />
-                                        <TextBlock Text="{Binding CompletionDate}" MinWidth="100"/>
+                                <Border BorderBrush="#FFE0E0E0" 
+                                        BorderThickness="0,0,0,1" 
+                                        Padding="15,10" 
+                                        Background="White">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
                                         
-                                        <Button Content="👁️ Подробно" 
-                                                Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
-                                                CommandParameter="{Binding}"
-                                                Background="#FF4CAF50"
-                                                Foreground="White"
-                                                Padding="5,2"
-                                                FontSize="10"
-                                                Margin="10,0,0,0"/>
+                                        <TextBlock Grid.Column="0" 
+                                                   Text="{Binding UserName}" 
+                                                   FontWeight="SemiBold" 
+                                                   VerticalAlignment="Center"/>
                                         
-                                        <Button Content="🗑️ Удалить" 
-                                                Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).DeleteResultCommand}"
-                                                CommandParameter="{Binding}"
-                                                Background="#FFF44336"
-                                                Foreground="White"
-                                                Padding="5,2"
-                                                FontSize="10"/>
-                                    </StackPanel>
+                                        <TextBlock Grid.Column="1" 
+                                                   Text="{Binding TestTitle}" 
+                                                   VerticalAlignment="Center" 
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        
+                                        <TextBlock Grid.Column="2" 
+                                                   Text="{Binding Score}" 
+                                                   VerticalAlignment="Center" 
+                                                   FontWeight="Bold"
+                                                   Foreground="#FF4CAF50"/>
+                                        
+                                        <TextBlock Grid.Column="3" 
+                                                   Text="{Binding Percentage, StringFormat={}{0}%}" 
+                                                   VerticalAlignment="Center" 
+                                                   FontWeight="Bold"
+                                                   Foreground="#FF2196F3"/>
+                                        
+                                        <TextBlock Grid.Column="4" 
+                                                   Text="{Binding CompletionDate}" 
+                                                   VerticalAlignment="Center" 
+                                                   FontSize="12"
+                                                   Foreground="#FF666666"/>
+                                        
+                                        <StackPanel Grid.Column="5" 
+                                                    Orientation="Horizontal" 
+                                                    Spacing="8" 
+                                                    VerticalAlignment="Center">
+                                            <Button Content="Подробно" 
+                                                    Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="#FF4CAF50"
+                                                    Foreground="White"
+                                                    Padding="12,6"
+                                                    FontSize="12"
+                                                    CornerRadius="4"
+                                                    BorderThickness="0"/>
+                                            
+                                            <Button Content="Удалить" 
+                                                    Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).DeleteResultCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="#FFF44336"
+                                                    Foreground="White"
+                                                    Padding="12,6"
+                                                    FontSize="12"
+                                                    CornerRadius="4"
+                                                    BorderThickness="0"/>
+                                        </StackPanel>
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     
-                    <TextBlock Text="Результаты не найдены" 
-                               HorizontalAlignment="Center" 
-                               Margin="20"
-                               FontStyle="Italic"
-                               Name="NoResultsMessage"/>
+                    <Border IsVisible="{Binding HasNoResults}" 
+                            Padding="50" 
+                            Background="White">
+                        <StackPanel HorizontalAlignment="Center" Spacing="10">
+                            <TextBlock Text="📊" FontSize="48" HorizontalAlignment="Center" Opacity="0.3"/>
+                            <TextBlock Text="Результаты тестов не найдены" 
+                                       HorizontalAlignment="Center" 
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FF666666"/>
+                            <TextBlock Text="Пройдите хотя бы один тест, чтобы увидеть результаты" 
+                                       HorizontalAlignment="Center" 
+                                       FontSize="14"
+                                       Foreground="#FF999999"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-            </Border>
+            </ScrollViewer>
+        </Border>
 
-            <Border Background="LightCoral" Padding="10" CornerRadius="5">
-                <StackPanel>
-                    <TextBlock Text="Тест статических данных:" FontWeight="Bold" Margin="0,0,0,10"/>
-                    <TextBlock Text="Пользователь: nozdr, Тест: Test 1, Результат: 3/3" />
-                    <TextBlock Text="Пользователь: nozdr, Тест: Test 2, Результат: 1/1" />
-                    <TextBlock Text="Пользователь: nozdr, Тест: Test 3, Результат: 1/1" />
-                </StackPanel>
-            </Border>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-                <Button Content="Обновить" 
-                        Command="{Binding RefreshCommand}"
-                        Background="#FF2196F3"
-                        Foreground="White"
-                        Padding="20,10"
-                        FontSize="14"/>
-                
-                <Button Content="Закрыть" 
-                        Command="{Binding CloseCommand}"
-                        Background="#FF757575"
-                        Foreground="White"
-                        Padding="20,10"
-                        FontSize="14"/>
-            </StackPanel>
-
+        <StackPanel Grid.Row="4" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,20,0,0" 
+                    Spacing="15">
+            
+            <Button Content="🔄 Обновить" 
+                    Command="{Binding RefreshCommand}"
+                    Background="#FF2196F3"
+                    Foreground="White"
+                    Padding="20,12"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    CornerRadius="6"
+                    BorderThickness="0"/>
+            
+            <Button Content="✖️ Закрыть" 
+                    Command="{Binding CloseCommand}"
+                    Background="#FF757575"
+                    Foreground="White"
+                    Padding="20,12"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    CornerRadius="6"
+                    BorderThickness="0"/>
         </StackPanel>
-    </ScrollViewer>
+    </Grid>
 </Window>

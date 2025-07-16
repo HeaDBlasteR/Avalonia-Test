@@ -4,68 +4,276 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="AvaloniaTests.Views.TestEditorWindow"
-        WindowState="Maximized"
+        Width="1000"
+        Height="700"
         WindowStartupLocation="CenterOwner"
         x:DataType="vm:TestEditorViewModel"
         xmlns:vm="clr-namespace:AvaloniaTests.ViewModels"
         xmlns:converters="clr-namespace:AvaloniaTests.Converters"
-		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
-        Title="Ебучее Создание Теста"
-		Background="#FFF5E6CC"
-        Foreground="Black">
+		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
+        Title="📝 Создание и редактирование теста"
+        MinWidth="900"
+        MinHeight="600"
+        Background="#F5F5DC">
 
-    <Grid Margin="10">
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="5">
-            <TextBlock Text="Название теста:" FontWeight="Bold"/>
-            <TextBox Text="{Binding EditingTest.Title}"/>
-            <TextBlock Text="Описание:" FontWeight="Bold"/>
-            <TextBox Text="{Binding EditingTest.Description}" AcceptsReturn="True" Height="60"/>
-        </StackPanel>
+        <Border Grid.Row="0" 
+                Background="White" 
+                CornerRadius="15" 
+                Padding="25"
+                BorderThickness="1"
+                BorderBrush="#E0E0E0">
+            <StackPanel Spacing="15">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="📝" FontSize="24" VerticalAlignment="Center"/>
+                    <TextBlock Text="Основная информация о тесте" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               Foreground="#2C3E50"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
 
-        <StackPanel Grid.Row="1" Margin="0,10,0,0">
-            <TextBlock Text="Список вопросов" FontWeight="Bold"/>
-            <ItemsControl ItemsSource="{Binding EditingTest.Questions}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="Gray" BorderThickness="1" Margin="0,5,0,5" Padding="5">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Text}" FontWeight="SemiBold"/>
-                                <StackPanel Orientation="Vertical" Margin="0,5,0,0">
-                                    <ItemsControl ItemsSource="{Binding Answers}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="8">
+                        <TextBlock Text="Название теста *" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#34495E"
+                                   FontSize="14"/>
+                        <TextBlock Text="Обязательно для заполнения" 
+                                   FontSize="12" 
+                                   Foreground="#E74C3C"
+                                   FontStyle="Italic"
+                                   Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding EditingTest.Title}" 
+                                 Watermark="Введите название теста..."
+                                 Padding="12"
+                                 FontSize="14"
+                                 CornerRadius="8"
+                                 BorderThickness="2"
+                                 BorderBrush="#BDC3C7"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Spacing="8">
+                        <TextBlock Text="Описание теста" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#34495E"
+                                   FontSize="14"/>
+                        <TextBox Text="{Binding EditingTest.Description}" 
+                                 Watermark="Краткое описание теста..."
+                                 AcceptsReturn="True" 
+                                 Height="80"
+                                 Padding="12"
+                                 FontSize="14"
+                                 CornerRadius="8"
+                                 BorderThickness="2"
+                                 BorderBrush="#BDC3C7"
+                                 TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="15" 
+                Padding="25"
+                Margin="0,20,0,20"
+                BorderThickness="1"
+                BorderBrush="#E0E0E0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
+                    <TextBlock Text="❓" FontSize="24" VerticalAlignment="Center"/>
+                    <TextBlock Text="Вопросы теста" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               Foreground="#2C3E50"
+                               VerticalAlignment="Center"/>
+                    <Border Background="#3498DB" 
+                            CornerRadius="12" 
+                            Padding="8,4"
+                            VerticalAlignment="Center"
+                            Margin="10,0,0,0">
+                        <TextBlock Text="{Binding EditingTest.Questions.Count, StringFormat='Всего: {0}'}" 
+                                   Foreground="White" 
+                                   FontWeight="SemiBold"
+                                   FontSize="12"/>
+                    </Border>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding EditingTest.Questions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8F9FA" 
+                                        BorderBrush="#E9ECEF" 
+                                        BorderThickness="1" 
+                                        CornerRadius="10" 
+                                        Margin="0,0,0,15" 
+                                        Padding="20">
+                                    <StackPanel Spacing="15">
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <Border Background="#E74C3C" 
+                                                    CornerRadius="15" 
+                                                    Width="30" 
+                                                    Height="30">
+                                                <TextBlock Text="Q" 
+                                                           Foreground="White" 
+                                                           FontWeight="Bold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{Binding Text}" 
+                                                       FontWeight="SemiBold"
+                                                       FontSize="16"
+                                                       Foreground="#2C3E50"
+                                                       TextWrapping="Wrap"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="40,0,0,0">
+                                            <TextBlock Text="Варианты ответов:" 
+                                                       FontWeight="SemiBold" 
+                                                       Foreground="#7F8C8D"
+                                                       FontSize="14"
+                                                       Margin="0,0,0,10"/>
+                                            <ItemsControl ItemsSource="{Binding Answers}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal" 
+                                                                    Spacing="10" 
+                                                                    Margin="0,5,0,5">
+                                                            <Border Background="{Binding Id, Converter={x:Static converters:EqualityConverter.Instance}, 
+                                                                                 ConverterParameter={Binding $parent[StackPanel].DataContext.CorrectAnswerId},
+                                                                                 FallbackValue=#BDC3C7}"
+                                                                    CornerRadius="10"
+                                                                    Width="20"
+                                                                    Height="20">
+                                                                <TextBlock Text="✓" 
+                                                                           Foreground="White" 
+                                                                           FontWeight="Bold"
+                                                                           FontSize="12"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <TextBlock Text="{Binding Text}" 
+                                                                       FontSize="14"
+                                                                       Foreground="#34495E"
+                                                                       VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" 
+                                                    HorizontalAlignment="Right" 
+                                                    Spacing="10" 
+                                                    Margin="0,10,0,0">
+                                            <Button Command="{Binding $parent[Window].DataContext.EditQuestionCommand}" 
+                                                    CommandParameter="{Binding}"
+                                                    Padding="12,8"
+                                                    CornerRadius="8"
+                                                    Background="#3498DB"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    FontWeight="SemiBold">
                                                 <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <RadioButton IsChecked="{Binding Id, Converter={x:Static converters:EqualityConverter.Instance}, 
-																 ConverterParameter={Binding $parent[StackPanel].DataContext.CorrectAnswerId}}" 
-																 IsHitTestVisible="False"/>
-                                                    <TextBlock Text="{Binding Text}"/>
+                                                    <TextBlock Text="✏️" FontSize="14"/>
+                                                    <TextBlock Text="Редактировать"/>
                                                 </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5" Margin="0,5,0,0">
-                                    <Button Content="✏️" Command="{Binding $parent[Window].DataContext.EditQuestionCommand}" 
-											CommandParameter="{Binding}"/>
-                                    <Button Content="❌" Command="{Binding $parent[Window].DataContext.RemoveQuestionCommand}" 
-											CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
+                                            </Button>
+                                            <Button Command="{Binding $parent[Window].DataContext.RemoveQuestionCommand}" 
+                                                    CommandParameter="{Binding}"
+                                                    Padding="12,8"
+                                                    CornerRadius="8"
+                                                    Background="#E74C3C"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    FontWeight="SemiBold">
+                                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                                    <TextBlock Text="🗑️" FontSize="14"/>
+                                                    <TextBlock Text="Удалить"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-            <Button Content="Добавить вопрос" Command="{Binding AddQuestionCommand}" Foreground="Black"/>
-            <Button Content="Сохранить" Command="{Binding SaveCommand}" Foreground="Black"/>
-        </StackPanel>
+                <Button Grid.Row="2" 
+                        Command="{Binding AddQuestionCommand}" 
+                        HorizontalAlignment="Center"
+                        Margin="0,20,0,0"
+                        Padding="20,12"
+                        CornerRadius="10"
+                        Background="#27AE60"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontWeight="SemiBold"
+                        FontSize="16">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="➕" FontSize="18"/>
+                        <TextBlock Text="Добавить новый вопрос"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" 
+                Background="White" 
+                CornerRadius="15" 
+                Padding="20"
+                BorderThickness="1"
+                BorderBrush="#E0E0E0">
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right" 
+                        Spacing="15">
+                
+                <Button Content="Отмена" 
+                        Padding="20,12"
+                        CornerRadius="8"
+                        Background="#95A5A6"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontWeight="SemiBold"
+                        FontSize="14"
+                        Click="CancelButton_Click"/>
+                
+                <Button Command="{Binding SaveCommand}" 
+                        Padding="25,12"
+                        CornerRadius="8"
+                        Background="#2ECC71"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontWeight="SemiBold"
+                        FontSize="14">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="💾" FontSize="16"/>
+                        <TextBlock Text="Сохранить тест"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
