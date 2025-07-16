@@ -1,5 +1,6 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AvaloniaTests.Views.TestRunnerWindow"
         WindowState="Maximized"
         WindowStartupLocation="CenterOwner"
         x:DataType="vm:TestRunnerViewModel"
@@ -22,8 +23,14 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="{Binding TestTitle}" FontSize="16" FontWeight="Bold"/>
-        <TextBlock Grid.Row="0" Text="{Binding QuestionNumber, StringFormat='Вопрос {0}/{1}'}"
-                   HorizontalAlignment="Right"/>
+        <TextBlock Grid.Row="0" HorizontalAlignment="Right">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="Вопрос {0} из {1}">
+                    <Binding Path="QuestionNumber"/>
+                    <Binding Path="TotalQuestions"/>
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
 
         <StackPanel Grid.Row="1" Margin="0,20">
             <TextBlock Text="{Binding CurrentQuestion.Text}" FontSize="14" Margin="0,0,0,10"/>
@@ -32,20 +39,24 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <RadioButton Content="{Binding Text}"
-                                     IsChecked="{Binding $parent[Window].DataContext.SelectedAnswer, Converter={StaticResource IsSelectedConverter}}"
                                      Command="{Binding $parent[Window].DataContext.SelectAnswerCommand}"
-                                     CommandParameter="{Binding Id}"
-                                     GroupName="Answers"
-                                     Margin="5"/>
+                                     CommandParameter="{Binding Id}" GroupName="Answers" Margin="5" Foreground="Black">
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{StaticResource IsSelectedConverter}">
+                                    <Binding Path="Id"/>
+                                    <Binding Path="$parent[Window].DataContext.SelectedAnswer"/>
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                        </RadioButton>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-            <Button Content="Назад" Command="{Binding PreviousQuestionCommand}"/>
-            <Button Content="Вперед" Command="{Binding NextQuestionCommand}"/>
-            <Button Content="Завершить" Command="{Binding FinishTestCommand}"/>
+            <Button Content="Назад" Command="{Binding PreviousQuestionCommand}" Foreground="Black"/>
+            <Button Content="Вперед" Command="{Binding NextQuestionCommand}" Foreground="Black"/>
+            <Button Content="Завершить" Command="{Binding FinishTestCommand}" Foreground="Black"/>
         </StackPanel>
     </Grid>
 </Window>

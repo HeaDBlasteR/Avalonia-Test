@@ -7,6 +7,7 @@ using AvaloniaTests.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System;
+using System.Reactive;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -44,8 +45,23 @@ namespace AvaloniaTests.ViewModels
             StartTestCommand = ReactiveCommand.Create(OpenStartTestWindow);
             OpenResultsTabCommand = ReactiveCommand.Create(OpenResultsTab);
 
+            (CreateTestCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (EditTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (DeleteTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (TakeTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (ViewResultsCommand as ReactiveCommand<TestResult, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (OpenTestListCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (StartTestCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (OpenResultsTabCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+
             LoadData();
         }
+
+        private void HandleCommandException(Exception ex)
+        {
+            Console.WriteLine($"ошибка команды: {ex.Message}");
+        }
+
 
         private void LoadData()
         {

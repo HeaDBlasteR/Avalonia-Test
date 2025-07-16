@@ -8,10 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AvaloniaResource Include="Views\MainWindow.axaml" />
-		<AvaloniaResource Include="Views\ResultWindow.axaml" />
-		<AvaloniaResource Include="Views\TestEditorWindow.axaml" />
-		<AvaloniaResource Include="Views\TestRunnerWindow.axaml" />
 		<AvaloniaXaml Remove="**\*.axaml" />
 	</ItemGroup>
 
@@ -20,6 +16,10 @@
 	    <SubType>Designer</SubType>
 	  </AvaloniaXaml>
 	  <AvaloniaXaml Include="Views\TestListWindow.axaml" />
+	  <AvaloniaXaml Include="Views\MainWindow.axaml" />
+	  <AvaloniaXaml Include="Views\ResultWindow.axaml" />
+	  <AvaloniaXaml Include="Views\TestEditorWindow.axaml" />
+	  <AvaloniaXaml Include="Views\TestRunnerWindow.axaml" />
 	</ItemGroup>
 
 	<ItemGroup>

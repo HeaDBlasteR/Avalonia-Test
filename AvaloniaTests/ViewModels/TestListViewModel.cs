@@ -1,9 +1,11 @@
 using Avalonia.Controls;
 using AvaloniaTests.Models;
-using AvaloniaTests.Views;
 using AvaloniaTests.Services;
+using AvaloniaTests.Views;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
+using System.Reactive;
 using System.Windows.Input;
 
 namespace AvaloniaTests.ViewModels
@@ -42,10 +44,22 @@ namespace AvaloniaTests.ViewModels
             CreateTestCommand = ReactiveCommand.Create(CreateTest);
             SelectTestCommand = ReactiveCommand.Create<Test>(SelectTest);
             RefreshCommand = ReactiveCommand.Create(Refresh);
-            
+
+            (EditTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (DeleteTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (CloseCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (CreateTestCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (SelectTestCommand as ReactiveCommand<Test, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (RefreshCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+
             System.Diagnostics.Debug.WriteLine("TestListViewModel: Конструктор вызван");
             
             LoadTests();
+        }
+
+        private void HandleCommandException(Exception ex)
+        {
+            Console.WriteLine($"Ошибка команды: {ex.Message}");
         }
 
         public void LoadTests()
@@ -115,12 +129,78 @@ namespace AvaloniaTests.ViewModels
 
         private void SelectTest(Test test)
         {
-            if (_selectMode && _resultService != null)
+            try
             {
-                var vm = new TestRunnerViewModel(test, _resultService);
-                var win = new TestRunnerWindow(vm);
-                win.ShowDialog(_window);
-                _window.Close();
+                if (_selectMode && _resultService != null)
+                {
+                    if (test.Questions == null || test.Questions.Count == 0)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"TestListViewModel.SelectTest: Тест '{test.Title}' не имеет вопросов");
+                        return;
+                    }
+
+                    foreach (var question in test.Questions)
+                    {
+                        if (question.Answers == null || question.Answers.Count == 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"TestListViewModel.SelectTest: Вопрос '{question.Text}' не имеет ответов");
+                            return;
+                        }
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"TestListViewModel.SelectTest: Начинаем тест '{test.Title}'");
+                    
+                    System.Diagnostics.Debug.WriteLine("TestListViewModel.SelectTest: Создаем TestRunnerViewModel");
+                    var vm = new TestRunnerViewModel(test, _resultService);
+                    
+                    System.Diagnostics.Debug.WriteLine("TestListViewModel.SelectTest: Создаем TestRunnerWindow");
+                    var win = new TestRunnerWindow(vm);
+                    
+                    var mainWindow = (Avalonia.Application.Current.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                    if (mainWindow != null)
+                    {
+                        win.WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterOwner;
+                        win.ShowDialog(mainWindow);
+                        System.Diagnostics.Debug.WriteLine("TestListViewModel.SelectTest: Окно показано как диалог");
+                    }
+                    else
+                    {
+                        win.Show();
+                        System.Diagnostics.Debug.WriteLine("TestListViewModel.SelectTest: Окно показано обычным способом");
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine("TestListViewModel.SelectTest: Закрываем родительское окно");
+                    _window.Close();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"TestListViewModel.SelectTest: Режим выбора отключен или сервис результатов не доступен. _selectMode={_selectMode}, _resultService={_resultService}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"TestListViewModel.SelectTest: Ошибка при запуске теста: {ex}");
+                Console.WriteLine($"Ошибка при запуске теста: {ex.Message}");
+                
+                try
+                {
+                    var errorWindow = new Window
+                    {
+                        Title = "Ошибка",
+                        Width = 400,
+                        Height = 300,
+                        Content = new TextBlock 
+                        { 
+                            Text = $"Произошла ошибка при запуске теста:\n\n{ex.Message}\n\nПодробности:\n{ex.StackTrace}",
+                            TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                            Margin = new Avalonia.Thickness(10)
+                        }
+                    };
+                    errorWindow.ShowDialog(_window);
+                }
+                catch
+                {
+                }
             }
         }
     }

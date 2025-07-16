@@ -1,30 +1,27 @@
-﻿using Avalonia;
-using Avalonia.Data.Converters;
+﻿using Avalonia.Data.Converters;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace AvaloniaTests.Converters
 {
-    public class IsSelectedConverter : IValueConverter
+    public class IsSelectedConverter : IMultiValueConverter
     {
         public static IsSelectedConverter Instance { get; } = new();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is Guid answerId && parameter is Guid selectedAnswerId)
+            if (values.Count == 2 && values[0] is Guid answerId && values[1] is Guid selectedAnswerId)
             {
                 return answerId == selectedAnswerId;
             }
-            return false;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool isSelected && isSelected)
+            
+            if (values.Count == 2 && values[0] is Guid id && values[1] == null)
             {
-                return parameter;
+                return false;
             }
-            return AvaloniaProperty.UnsetValue;
+            
+            return false;
         }
     }
 }

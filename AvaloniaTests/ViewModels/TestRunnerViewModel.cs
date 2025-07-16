@@ -7,6 +7,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Windows.Input;
 
 namespace AvaloniaTests.ViewModels
@@ -19,10 +20,20 @@ namespace AvaloniaTests.ViewModels
         private Dictionary<Guid, Guid> _userAnswers = new();
         private Guid? _selectedAnswer;
 
-        public Question CurrentQuestion => _test.Questions[_currentQuestionIndex];
-        public string TestTitle => _test.Title;
+        public Question CurrentQuestion 
+        { 
+            get 
+            {
+                if (_test?.Questions == null || _currentQuestionIndex < 0 || _currentQuestionIndex >= _test.Questions.Count)
+                {
+                    throw new InvalidOperationException($"Invalid question index: {_currentQuestionIndex}");
+                }
+                return _test.Questions[_currentQuestionIndex];
+            }
+        }
+        public string TestTitle => _test?.Title ?? "Unknown Test";
         public int QuestionNumber => _currentQuestionIndex + 1;
-        public int TotalQuestions => _test.Questions.Count;
+        public int TotalQuestions => _test?.Questions?.Count ?? 0;
 
         public Guid? SelectedAnswer
         {
@@ -37,35 +48,65 @@ namespace AvaloniaTests.ViewModels
 
         public TestRunnerViewModel(Test test, IResultService resultService)
         {
-            _test = test;
-            _resultService = resultService;
+            _test = test ?? throw new ArgumentNullException(nameof(test));
+            _resultService = resultService ?? throw new ArgumentNullException(nameof(resultService));
             _currentQuestionIndex = 0;
+
+            if (_test.Questions == null || _test.Questions.Count == 0)
+            {
+                throw new InvalidOperationException("Test must have at least one question");
+            }
+
+            _test.FixCollections();
+
+            SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
 
             NextQuestionCommand = ReactiveCommand.Create(NextQuestion);
             PreviousQuestionCommand = ReactiveCommand.Create(PreviousQuestion);
             FinishTestCommand = ReactiveCommand.Create(FinishTest);
             SelectAnswerCommand = ReactiveCommand.Create<Guid>(SelectAnswer);
+
+            (NextQuestionCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (PreviousQuestionCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (FinishTestCommand as ReactiveCommand<Unit, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+            (SelectAnswerCommand as ReactiveCommand<Guid, Unit>)?.ThrownExceptions.Subscribe(HandleCommandException);
+        }
+
+        private void HandleCommandException(Exception ex)
+        {
+            Console.WriteLine($"Ошибка команды в TestRunnerViewModel: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"TestRunnerViewModel.HandleCommandException: {ex}");
         }
 
         private void SelectAnswer(Guid answerId)
         {
-            _userAnswers[CurrentQuestion.Id] = answerId;
+            if (CurrentQuestion != null)
+            {
+                _userAnswers[CurrentQuestion.Id] = answerId;
+                SelectedAnswer = answerId;
+            }
         }
 
         private void NextQuestion()
         {
-            _currentQuestionIndex++;
-            this.RaisePropertyChanged(nameof(CurrentQuestion));
-            this.RaisePropertyChanged(nameof(QuestionNumber));
-            SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
+            if (_currentQuestionIndex < _test.Questions.Count - 1)
+            {
+                _currentQuestionIndex++;
+                this.RaisePropertyChanged(nameof(CurrentQuestion));
+                this.RaisePropertyChanged(nameof(QuestionNumber));
+                SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
+            }
         }
 
         private void PreviousQuestion()
         {
-            _currentQuestionIndex--;
-            this.RaisePropertyChanged(nameof(CurrentQuestion));
-            this.RaisePropertyChanged(nameof(QuestionNumber));
-            SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
+            if (_currentQuestionIndex > 0)
+            {
+                _currentQuestionIndex--;
+                this.RaisePropertyChanged(nameof(CurrentQuestion));
+                this.RaisePropertyChanged(nameof(QuestionNumber));
+                SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
+            }
         }
 
         private void FinishTest()
@@ -98,9 +139,17 @@ namespace AvaloniaTests.ViewModels
 
         private void CloseTestWindow()
         {
-            var windows = (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime).Windows;
-            var currentWindow = windows.FirstOrDefault(w => w.DataContext == this);
-            currentWindow.Close();
+            var windows = (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Windows;
+            var currentWindow = windows?.FirstOrDefault(w => w.DataContext == this);
+            if (currentWindow != null)
+            {
+                System.Diagnostics.Debug.WriteLine("TestRunnerViewModel.CloseTestWindow: Закрываем окно теста");
+                currentWindow.Close();
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("TestRunnerViewModel.CloseTestWindow: Окно теста не найдено");
+            }
         }
     }
 }
