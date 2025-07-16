@@ -65,6 +65,8 @@ namespace AvaloniaTests.ViewModels
 
         private void LoadData()
         {
+            System.Diagnostics.Debug.WriteLine("MainWindowViewModel.LoadData: Загружаем данные");
+            
             Tests.Clear();
             var tests = _testService.GetTests();
             
@@ -75,9 +77,12 @@ namespace AvaloniaTests.ViewModels
 
             Results.Clear();
             var results = _resultService.GetResults();
+            System.Diagnostics.Debug.WriteLine($"MainWindowViewModel.LoadData: Загружено {results.Count} результатов");
+            
             foreach (var result in results)
             {
                 Results.Add(result);
+                System.Diagnostics.Debug.WriteLine($"  - Результат: {result.UserName}, {result.Score}/{result.MaxScore}, {result.CompletionDate}");
             }
         }
 

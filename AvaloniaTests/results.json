@@ -1,1 +1,151 @@
-[]
+﻿[
+  {
+    "Id": "e4b5a278-4050-42e5-9cd4-b504b38b105d",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T09:55:57.7210186+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {}
+  },
+  {
+    "Id": "d5cf56d8-a12f-46db-a023-7c861a1e40ec",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T09:57:08.4814961+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "550e8400-e29b-41d4-a716-446655440001": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  },
+  {
+    "Id": "2e2d352b-9d00-436d-8a3e-45607f579bbf",
+    "TestId": "16efbb3b-9543-4e3b-86bf-125386a73011",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T09:57:22.2240238+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "0d771ad8-8458-4edb-a709-a9d7d7fcfa1c": "f8f7892c-0de1-4db9-b281-3cfde0731bd3"
+    }
+  },
+  {
+    "Id": "5502cd6e-bf73-4449-bef4-a17ac39f37e5",
+    "TestId": "d9f67189-c87e-4a3a-a86a-da86619ce611",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T09:58:11.4742221+03:00",
+    "Score": 3,
+    "MaxScore": 3,
+    "UserAnswers": {
+      "8bb67414-be48-48cc-92cc-a64c09151dc0": "2c1770ba-2d8a-4974-aac7-6bc5bca59765",
+      "38d2b82e-9052-4fb8-a4fc-02e157adaeea": "5ea39e7c-7f14-46c0-9c59-fa728a0ab995",
+      "9963d818-7c27-4cea-8c1d-74cc522a4f21": "88b26fe3-ecf1-4bd2-8686-af8c9160882f"
+    }
+  },
+  {
+    "Id": "2dcf8b9d-dde6-40be-b533-e626bd47a702",
+    "TestId": "d9f67189-c87e-4a3a-a86a-da86619ce611",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T09:58:24.912026+03:00",
+    "Score": 2,
+    "MaxScore": 3,
+    "UserAnswers": {
+      "8bb67414-be48-48cc-92cc-a64c09151dc0": "2c1770ba-2d8a-4974-aac7-6bc5bca59765",
+      "38d2b82e-9052-4fb8-a4fc-02e157adaeea": "5ea39e7c-7f14-46c0-9c59-fa728a0ab995",
+      "9963d818-7c27-4cea-8c1d-74cc522a4f21": "8aadccb1-e806-46d7-8b71-942ec0e97b59"
+    }
+  },
+  {
+    "Id": "9af1225c-7c11-4704-98c4-e9ca44a4ee4c",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:17:37.8257016+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "550e8400-e29b-41d4-a716-446655440001": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  },
+  {
+    "Id": "8bef5fac-d3cc-4ed7-928c-f0a13ca831dc",
+    "TestId": "d9f67189-c87e-4a3a-a86a-da86619ce611",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:17:58.1483536+03:00",
+    "Score": 3,
+    "MaxScore": 3,
+    "UserAnswers": {
+      "8bb67414-be48-48cc-92cc-a64c09151dc0": "2c1770ba-2d8a-4974-aac7-6bc5bca59765",
+      "38d2b82e-9052-4fb8-a4fc-02e157adaeea": "5ea39e7c-7f14-46c0-9c59-fa728a0ab995",
+      "9963d818-7c27-4cea-8c1d-74cc522a4f21": "88b26fe3-ecf1-4bd2-8686-af8c9160882f"
+    }
+  },
+  {
+    "Id": "1a2c080d-0338-46c5-82fc-d4de92201f7c",
+    "TestId": "d9f67189-c87e-4a3a-a86a-da86619ce611",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:19:09.1125267+03:00",
+    "Score": 3,
+    "MaxScore": 3,
+    "UserAnswers": {
+      "8bb67414-be48-48cc-92cc-a64c09151dc0": "2c1770ba-2d8a-4974-aac7-6bc5bca59765",
+      "38d2b82e-9052-4fb8-a4fc-02e157adaeea": "5ea39e7c-7f14-46c0-9c59-fa728a0ab995",
+      "9963d818-7c27-4cea-8c1d-74cc522a4f21": "88b26fe3-ecf1-4bd2-8686-af8c9160882f"
+    }
+  },
+  {
+    "Id": "df182948-dc03-40af-a354-5f753f963f89",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:21:07.4638965+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "550e8400-e29b-41d4-a716-446655440001": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  },
+  {
+    "Id": "3aa84dd5-e111-4360-a869-a46443a8aefb",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:28:21.8764301+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "550e8400-e29b-41d4-a716-446655440001": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  },
+  {
+    "Id": "0e22d66f-3372-45a2-b375-ae94095b0780",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:36:58.7211592+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "550e8400-e29b-41d4-a716-446655440001": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  },
+  {
+    "Id": "b2a7b754-ca8f-40f1-abe5-0c9627ef4798",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:38:47.9480481+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "550e8400-e29b-41d4-a716-446655440001": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  },
+  {
+    "Id": "3821ced8-9557-49ec-8541-ae7cb8e33fe6",
+    "TestId": "550e8400-e29b-41d4-a716-446655440000",
+    "UserName": "nozdr",
+    "CompletionDate": "2025-07-16T10:45:44.4858644+03:00",
+    "Score": 1,
+    "MaxScore": 1,
+    "UserAnswers": {
+      "550e8400-e29b-41d4-a716-446655440001": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  }
+]

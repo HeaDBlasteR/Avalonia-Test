@@ -15,7 +15,7 @@ namespace AvaloniaTests.Models
 
         public void FixCollections()
         {
-            UserAnswers = new Dictionary<Guid, Guid>();
+            UserAnswers ??= new Dictionary<Guid, Guid>();
         }
     }
 }

@@ -111,6 +111,8 @@ namespace AvaloniaTests.ViewModels
 
         private void FinishTest()
         {
+            System.Diagnostics.Debug.WriteLine("TestRunnerViewModel.FinishTest: Начинаем завершение теста");
+            
             var result = new TestResult
             {
                 TestId = _test.Id,
@@ -123,7 +125,20 @@ namespace AvaloniaTests.ViewModels
             result.Score = _test.Questions.Count(q =>
                 _userAnswers.TryGetValue(q.Id, out var answerId) && answerId == q.CorrectAnswerId);
 
-            _resultService.SaveResult(result);
+            System.Diagnostics.Debug.WriteLine($"TestRunnerViewModel.FinishTest: Результат создан - {result.Score}/{result.MaxScore}");
+            System.Diagnostics.Debug.WriteLine($"TestRunnerViewModel.FinishTest: Пользователь: {result.UserName}");
+            System.Diagnostics.Debug.WriteLine($"TestRunnerViewModel.FinishTest: Количество ответов: {result.UserAnswers.Count}");
+
+            try
+            {
+                _resultService.SaveResult(result);
+                System.Diagnostics.Debug.WriteLine("TestRunnerViewModel.FinishTest: Результат успешно сохранен");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"TestRunnerViewModel.FinishTest: Ошибка сохранения результата: {ex}");
+                Console.WriteLine($"Ошибка сохранения результата: {ex.Message}");
+            }
 
             var mainWindow = (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime).MainWindow;
             var dialog = new Window
