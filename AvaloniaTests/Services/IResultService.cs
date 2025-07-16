@@ -1,4 +1,5 @@
 ﻿using AvaloniaTests.Models;
+using System;
 using System.Collections.Generic;
 
 namespace AvaloniaTests.Services
@@ -7,5 +8,6 @@ namespace AvaloniaTests.Services
     {
         List<TestResult> GetResults();
         void SaveResult(TestResult result);
+        void DeleteResult(Guid resultId);
     }
 }

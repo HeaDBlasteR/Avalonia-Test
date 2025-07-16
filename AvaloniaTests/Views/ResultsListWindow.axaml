@@ -3,7 +3,7 @@
         x:Class="AvaloniaTests.Views.ResultsListWindow"
         x:DataType="vm:ResultsListViewModel"
         xmlns:vm="clr-namespace:AvaloniaTests.ViewModels"
-        Width="800"
+        Width="850"
         Height="600"
         WindowStartupLocation="CenterOwner"
         Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
@@ -14,6 +14,7 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -26,52 +27,79 @@
                    HorizontalAlignment="Center" 
                    Margin="0,0,0,20"/>
 
-        <DataGrid Grid.Row="1" 
+        <!-- Results Count -->
+        <TextBlock Grid.Row="1" 
+                   Text="{Binding ResultsCount, StringFormat='Найдено результатов: {0}', FallbackValue='Найдено результатов: 0'}" 
+                   HorizontalAlignment="Center" 
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,15"/>
+
+        <DataGrid Grid.Row="2" 
+                  Name="ResultsDataGrid"
                   ItemsSource="{Binding Results}" 
                   AutoGenerateColumns="False" 
                   IsReadOnly="True"
                   GridLinesVisibility="All"
                   Background="White"
-                  SelectionMode="Single">
+                  SelectionMode="Single"
+                  CanUserReorderColumns="False"
+                  CanUserResizeColumns="True"
+                  CanUserSortColumns="False">
             
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Пользователь" 
                                     Binding="{Binding UserName}" 
-                                    Width="150"/>
+                                    Width="120"
+                                    IsReadOnly="True"/>
                 
                 <DataGridTextColumn Header="Тест" 
                                     Binding="{Binding TestTitle}" 
-                                    Width="200"/>
+                                    Width="180"
+                                    IsReadOnly="True"/>
                 
                 <DataGridTextColumn Header="Результат" 
                                     Binding="{Binding Score}" 
-                                    Width="100"/>
+                                    Width="80"
+                                    IsReadOnly="True"/>
                 
                 <DataGridTextColumn Header="Процент" 
-                                    Binding="{Binding Percentage, StringFormat={}%}" 
-                                    Width="80"/>
+                                    Binding="{Binding Percentage, StringFormat={}{0}%}" 
+                                    Width="70"
+                                    IsReadOnly="True"/>
                 
                 <DataGridTextColumn Header="Дата прохождения" 
                                     Binding="{Binding CompletionDate}" 
-                                    Width="150"/>
+                                    Width="130"
+                                    IsReadOnly="True"/>
                 
-                <DataGridTemplateColumn Header="Действия" Width="120">
+                <DataGridTemplateColumn Header="Действия" Width="180">
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Подробно" 
-                                    Command="{Binding $parent[DataGrid].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
-                                    CommandParameter="{Binding}"
-                                    Background="#FF4CAF50"
-                                    Foreground="White"
-                                    Margin="5"
-                                    Padding="10,5"/>
+                        <DataTemplate x:DataType="vm:TestResultDisplayItem">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Button Content="Подробно" 
+                                        Command="{Binding $parent[DataGrid].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="#FF4CAF50"
+                                        Foreground="White"
+                                        Margin="2"
+                                        Padding="8,4"
+                                        FontSize="12"/>
+                                <Button Content="Удалить" 
+                                        Command="{Binding $parent[DataGrid].((vm:ResultsListViewModel)DataContext).DeleteResultCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="#FFF44336"
+                                        Foreground="White"
+                                        Margin="2"
+                                        Padding="8,4"
+                                        FontSize="12"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="2" 
+        <StackPanel Grid.Row="3" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Center" 
                     Margin="0,20,0,0" 
