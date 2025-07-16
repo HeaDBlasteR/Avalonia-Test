@@ -15,7 +15,6 @@ namespace AvaloniaTests.Views
                 InitializeComponent();
                 DataContext = viewModel;
                 
-                // Передаем ссылку на это окно в ViewModel
                 viewModel.SetCurrentWindow(this);
                 
                 System.Diagnostics.Debug.WriteLine("ResultsListWindow: Инициализация завершена успешно");

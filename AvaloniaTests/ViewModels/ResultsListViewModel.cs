@@ -54,7 +54,6 @@ namespace AvaloniaTests.ViewModels
 
         private void CloseWindow()
         {
-            // Закрываем именно окно результатов, а не родительское окно
             _currentWindow?.Close();
         }
 
