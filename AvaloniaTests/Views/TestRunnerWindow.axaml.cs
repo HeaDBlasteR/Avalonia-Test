@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AvaloniaTests.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AvaloniaTests.Views
 {

@@ -1,21 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 namespace AvaloniaTests.Models
 {
-    public class Test
+    public class Test : INotifyPropertyChanged
     {
+        private string _title = "";
+        private string _description = "";
+        
         [JsonPropertyName("Id")]
         public Guid Id { get; set; }
         
         [JsonPropertyName("Title")]
-        public string Title { get; set; }
+        public string Title 
+        { 
+            get => _title;
+            set
+            {
+                if (_title != value)
+                {
+                    _title = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         
         [JsonPropertyName("Description")]
-        public string Description { get; set; }
+        public string Description 
+        { 
+            get => _description;
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         
         [JsonPropertyName("Questions")]
         public List<Question> QuestionsData { get; set; }
@@ -24,6 +51,8 @@ namespace AvaloniaTests.Models
         public ObservableCollection<Question> Questions { get; set; }
 
         public string TestName => Title;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public Test()
         {
@@ -44,16 +73,16 @@ namespace AvaloniaTests.Models
 
         public void FixCollections()
         {
-            // Не создаем новый ID, если он уже существует
             if (Id == Guid.Empty)
                 Id = Guid.NewGuid();
                 
+            if (QuestionsData == null)
+                QuestionsData = new List<Question>();
+                
             Questions = new ObservableCollection<Question>(QuestionsData);
-            QuestionsData = Questions.ToList();
 
             foreach (var question in Questions)
             {
-                // Не создаем новый ID для вопроса, если он уже существует
                 if (question.Id == Guid.Empty)
                     question.Id = Guid.NewGuid();
                     
@@ -61,11 +90,19 @@ namespace AvaloniaTests.Models
 
                 foreach (var answer in question.Answers)
                 {
-                    // Не создаем новый ID для ответа, если он уже существует
                     if (answer.Id == Guid.Empty)
                         answer.Id = Guid.NewGuid();
                 }
             }
+            
+            QuestionsData = Questions.ToList();
+            
+            OnPropertyChanged(nameof(Questions));
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

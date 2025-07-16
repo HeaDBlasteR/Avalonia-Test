@@ -42,7 +42,17 @@ namespace AvaloniaTests.Models
 
         public void FixCollections()
         {
+            if (AnswersData == null)
+                AnswersData = new List<Answer>();
+                
             Answers = new ObservableCollection<Answer>(AnswersData);
+            
+            foreach (var answer in Answers)
+            {
+                if (answer.Id == Guid.Empty)
+                    answer.Id = Guid.NewGuid();
+            }
+            
             AnswersData = Answers.ToList();
         }
     }

@@ -1,7 +1,6 @@
 ﻿using AvaloniaTests.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -17,9 +16,51 @@ namespace AvaloniaTests.Services
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
         private List<Test> _tests = new();
+        private readonly string _testFilePath;
 
         public JsonTestService()
         {
+            var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AvaloniaTests");
+            if (!Directory.Exists(appDataPath))
+            {
+                Directory.CreateDirectory(appDataPath);
+            }
+            
+            _testFilePath = Path.Combine(appDataPath, "tests.json");
+            
+            if (!File.Exists(_testFilePath))
+            {
+                var exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? "";
+                var appJsonPath = Path.Combine(exeDir, "tests.json");
+                
+                if (File.Exists(appJsonPath))
+                {
+                    File.Copy(appJsonPath, _testFilePath, true);
+                }
+                else
+                {
+                    var sourceJsonPath = Path.Combine(Environment.CurrentDirectory, "tests.json");
+                    if (File.Exists(sourceJsonPath))
+                    {
+                        File.Copy(sourceJsonPath, _testFilePath, true);
+                    }
+                    else
+                    {
+                        var projectPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "tests.json");
+                        if (File.Exists(projectPath))
+                        {
+                            File.Copy(projectPath, _testFilePath, true);
+                        }
+                        else
+                        {
+                            _tests = new List<Test>();
+                            SaveTests();
+                            return;
+                        }
+                    }
+                }
+            }
+            
             LoadTests();
         }
 
@@ -67,11 +108,9 @@ namespace AvaloniaTests.Services
 
         private void LoadTests()
         {
-            var testFilePath = @"C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\bin\Debug\net8.0\tests.json";
-            
-            if (!File.Exists(testFilePath))
+            if (!File.Exists(_testFilePath))
             {
-                var directory = Path.GetDirectoryName(testFilePath);
+                var directory = Path.GetDirectoryName(_testFilePath);
                 if (!Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
@@ -82,35 +121,30 @@ namespace AvaloniaTests.Services
                 return;
             }
 
-            var json = File.ReadAllText(testFilePath);
-            if (string.IsNullOrWhiteSpace(json))
+            try
             {
-                _tests = new List<Test>();
-                return;
-            }
-
-            var loadedTests = JsonSerializer.Deserialize<List<Test>>(json, JsonOptions);
-            if (loadedTests != null)
-            {
-                _tests = loadedTests.Where(t => t != null && !string.IsNullOrWhiteSpace(t.Title)).ToList();
-                
-                foreach (var test in _tests)
+                var json = File.ReadAllText(_testFilePath, System.Text.Encoding.UTF8);
+                if (string.IsNullOrWhiteSpace(json))
                 {
-                    if (test.QuestionsData == null)
-                        test.QuestionsData = new List<Question>();
-                    
-                    test.Questions = new ObservableCollection<Question>(test.QuestionsData);
-                    
-                    foreach (var question in test.Questions)
+                    _tests = new List<Test>();
+                    return;
+                }
+
+                var loadedTests = JsonSerializer.Deserialize<List<Test>>(json, JsonOptions);
+                if (loadedTests != null)
+                {
+                    _tests = loadedTests.Where(t => t != null && !string.IsNullOrWhiteSpace(t.Title)).ToList();
+                    foreach (var test in _tests)
                     {
-                        if (question.AnswersData == null)
-                            question.AnswersData = new List<Answer>();
-                        question.Answers = new ObservableCollection<Answer>(question.AnswersData);
+                        test.FixCollections();
                     }
-                    test.FixCollections();
+                }
+                else
+                {
+                    _tests = new List<Test>();
                 }
             }
-            else
+            catch
             {
                 _tests = new List<Test>();
             }
@@ -118,9 +152,20 @@ namespace AvaloniaTests.Services
 
         private void SaveTests()
         {
-            var testFilePath = @"C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\bin\Debug\net8.0\tests.json";
-            var json = JsonSerializer.Serialize(_tests, JsonOptions);
-            File.WriteAllText(testFilePath, json);
+            try
+            {
+                var directory = Path.GetDirectoryName(_testFilePath);
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                
+                var json = JsonSerializer.Serialize(_tests, JsonOptions);
+                File.WriteAllText(_testFilePath, json, System.Text.Encoding.UTF8);
+            }
+            catch
+            {
+            }
         }
     }
 }

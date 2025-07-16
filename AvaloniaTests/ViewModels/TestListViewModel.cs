@@ -3,12 +3,8 @@ using AvaloniaTests.Models;
 using AvaloniaTests.Views;
 using AvaloniaTests.Services;
 using ReactiveUI;
-using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -18,7 +14,13 @@ namespace AvaloniaTests.ViewModels
         private readonly IResultService? _resultService;
         private readonly Window _window;
         private readonly bool _selectMode;
-        public ObservableCollection<Test> Tests { get; } = new();
+        
+        private ObservableCollection<Test> _tests = new();
+        public ObservableCollection<Test> Tests 
+        { 
+            get => _tests;
+            set => this.RaiseAndSetIfChanged(ref _tests, value);
+        }
 
         public ICommand EditTestCommand { get; }
         public ICommand DeleteTestCommand { get; }
@@ -33,6 +35,7 @@ namespace AvaloniaTests.ViewModels
             _window = window;
             _selectMode = selectMode;
             _resultService = resultService;
+            
             EditTestCommand = ReactiveCommand.Create<Test>(EditTest);
             DeleteTestCommand = ReactiveCommand.Create<Test>(DeleteTest);
             CloseCommand = ReactiveCommand.Create(() => _window.Close());
@@ -40,18 +43,43 @@ namespace AvaloniaTests.ViewModels
             SelectTestCommand = ReactiveCommand.Create<Test>(SelectTest);
             RefreshCommand = ReactiveCommand.Create(Refresh);
             
+            System.Diagnostics.Debug.WriteLine("TestListViewModel: Конструктор вызван");
+            
             LoadTests();
         }
 
         public void LoadTests()
         {
+            System.Diagnostics.Debug.WriteLine("TestListViewModel.LoadTests: Начинаем загрузку тестов");
+            
             var testsFromService = _testService.GetTests();
+            
+            System.Diagnostics.Debug.WriteLine($"TestListViewModel.LoadTests: Получено {testsFromService.Count} тестов из сервиса");
 
             Tests.Clear();
 
             foreach (var test in testsFromService)
             {
+                if (test.Questions == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"TestListViewModel.LoadTests: Исправляем коллекции для теста '{test.Title}'");
+                    test.FixCollections();
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"TestListViewModel.LoadTests: Добавляем тест '{test.Title}' с {test.Questions?.Count ?? 0} вопросами");
                 Tests.Add(test);
+                
+                System.Diagnostics.Debug.WriteLine($"  - ID: {test.Id}");
+                System.Diagnostics.Debug.WriteLine($"  - Title: '{test.Title}'");
+                System.Diagnostics.Debug.WriteLine($"  - Description: '{test.Description}'");
+                System.Diagnostics.Debug.WriteLine($"  - Questions Count: {test.Questions?.Count ?? 0}");
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"TestListViewModel.LoadTests: Завершено. Всего тестов в ObservableCollection: {Tests.Count}");
+            
+            for (int i = 0; i < Tests.Count; i++)
+            {
+                System.Diagnostics.Debug.WriteLine($"  Тест {i}: '{Tests[i].Title}'");
             }
             
             this.RaisePropertyChanged(nameof(Tests));
@@ -59,6 +87,7 @@ namespace AvaloniaTests.ViewModels
 
         public void Refresh()
         {
+            System.Diagnostics.Debug.WriteLine("TestListViewModel.Refresh: Обновляем список тестов");
             LoadTests();
         }
 

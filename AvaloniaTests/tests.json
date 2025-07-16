@@ -1,0 +1,46 @@
+[
+  {
+    "Id": "550e8400-e29b-41d4-a716-446655440000",
+    "Title": "Primer testa",
+    "Description": "Testovyj primer dlya proverki raboty",
+    "Questions": [
+      {
+        "Id": "550e8400-e29b-41d4-a716-446655440001",
+        "Text": "Chto takoe Avalonia?",
+        "Answers": [
+          {
+            "Id": "550e8400-e29b-41d4-a716-446655440002",
+            "Text": "UI framework dlya .NET"
+          },
+          {
+            "Id": "550e8400-e29b-41d4-a716-446655440003",
+            "Text": "Baza dannyh"
+          }
+        ],
+        "CorrectAnswerId": "550e8400-e29b-41d4-a716-446655440002"
+      }
+    ]
+  },
+  {
+    "Id": "550e8400-e29b-41d4-a716-446655440004",
+    "Title": "Vtoroj test",
+    "Description": "Eshche odin test dlya proverki",
+    "Questions": [
+      {
+        "Id": "550e8400-e29b-41d4-a716-446655440005",
+        "Text": "Kakoj yazyk programmirovaniya ispolzuetsya v C#?",
+        "Answers": [
+          {
+            "Id": "550e8400-e29b-41d4-a716-446655440006",
+            "Text": "C#"
+          },
+          {
+            "Id": "550e8400-e29b-41d4-a716-446655440007",
+            "Text": "Java"
+          }
+        ],
+        "CorrectAnswerId": "550e8400-e29b-41d4-a716-446655440006"
+      }
+    ]
+  }
+]

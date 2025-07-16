@@ -69,7 +69,6 @@ namespace AvaloniaTests.ViewModels
                     if (question.Answers != null)
                     {
                         question.AnswersData = question.Answers.ToList();
-                        
                         foreach (var answer in question.Answers)
                         {
                             if (answer.Id == Guid.Empty)
@@ -86,6 +85,7 @@ namespace AvaloniaTests.ViewModels
             {
                 EditingTest.QuestionsData = new System.Collections.Generic.List<Question>();
             }
+
             _testService.SaveTest(EditingTest);
             var currentWindow = (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Windows
                 .FirstOrDefault(w => w.DataContext == this);
@@ -233,7 +233,7 @@ namespace AvaloniaTests.ViewModels
                     var answerBox = new TextBox { Width = 200, Text = answer.Text };
                     answerBox.Bind(TextBox.TextProperty, new Binding("Text") { Source = answer, Mode = BindingMode.TwoWay });
 
-                    var removeBtn = new Button { Content = "Удалить", IsEnabled = question.Answers.Count > 2 };
+                    var removeBtn = new Button { Content = "Удалить", IsEnabled = question.Answers.Count > 2, Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black) };
                     removeBtn.Click += (_, __) => {
                         question.Answers.Remove(answer);
                         if (question.CorrectAnswerId == answer.Id)
@@ -261,15 +261,17 @@ namespace AvaloniaTests.ViewModels
             {
                 Title = "Редактирование вопроса",
                 Width = 500,
-                Height = 400
+                Height = 400,
+                Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#FFF5E6CC")),
+                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black)
             };
 
             var textBox = new TextBox { Watermark = "Введите текст вопроса" };
             textBox.Bind(TextBox.TextProperty, new Binding("Text") { Source = question, Mode = BindingMode.TwoWay });
 
-            var saveButton = new Button { Content = "Сохранить", IsDefault = true };
+            var saveButton = new Button { Content = "Сохранить", IsDefault = true, Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black) };
             saveButton.Click += (_, __) => editWindow.Close(true);
-            var cancelButton = new Button { Content = "Отмена", IsCancel = true };
+            var cancelButton = new Button { Content = "Отмена", IsCancel = true, Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black) };
             cancelButton.Click += (_, __) => editWindow.Close(false);
 
             editWindow.Content = new StackPanel

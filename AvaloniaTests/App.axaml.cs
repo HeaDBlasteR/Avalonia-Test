@@ -7,7 +7,6 @@ using AvaloniaTests.ViewModels;
 using AvaloniaTests.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
 
 namespace AvaloniaTests
 {
@@ -57,39 +56,11 @@ namespace AvaloniaTests
 
         public override void OnFrameworkInitializationCompleted()
         {
-            CheckTestsJsonFile();
-            
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = ServiceProvider.Instance.GetRequiredService<MainWindow>();
             }
             base.OnFrameworkInitializationCompleted();
-        }
-
-        private void CheckTestsJsonFile()
-        {
-            var testsJsonPath = @"C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\bin\Debug\net8.0\tests.json";
-            
-            if (!File.Exists(testsJsonPath))
-            {
-                var directory = Path.GetDirectoryName(testsJsonPath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-
-                var sourceJsonPath = @"C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\tests.json";
-                
-                if (File.Exists(sourceJsonPath))
-                {
-                    File.Copy(sourceJsonPath, testsJsonPath, true);
-                }
-                else
-                {
-                    var emptyTestsJson = "[]";
-                    File.WriteAllText(testsJsonPath, emptyTestsJson);
-                }
-            }
         }
     }
 }

@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AvaloniaTests.ViewModels;
-using AvaloniaTests.Models;
 using AvaloniaTests.Services;
 
 namespace AvaloniaTests.Views

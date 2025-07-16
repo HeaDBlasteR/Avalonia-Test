@@ -8,32 +8,62 @@
 		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudje.jpg"
 		Background="#FFF5E6CC"
         Foreground="Black"
-        Width="600" Height="500"
+        Width="800" Height="600"
         WindowStartupLocation="CenterOwner">
-    <StackPanel>
-        <TextBlock Text="Список тестов" FontWeight="Bold" Margin="10"/>
-        <Button Content="Создать новый тест" Margin="10" Command="{Binding CreateTestCommand}" Foreground="Black" HorizontalAlignment="Left"/>
-        <DataGrid ItemsSource="{Binding Tests}" AutoGenerateColumns="False" Margin="10" x:Name="TestGrid" SelectionMode="Single">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Название" Binding="{Binding Title}"/>
-                <DataGridTextColumn Header="Описание" Binding="{Binding Description}"/>
-                <DataGridTextColumn Header="Вопросов" Binding="{Binding Questions.Count}"/>
-                <DataGridTemplateColumn Header="Действия">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <Button Content="Редактировать" Command="{Binding DataContext.EditTestCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
-                                <Button Content="Удалить" Command="{Binding DataContext.DeleteTestCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
-                                <Button Content="Пройти" Command="{Binding DataContext.SelectTestCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" Spacing="10">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="10">
+            <TextBlock Text="Список тестов" FontWeight="Bold" FontSize="18" Margin="0,0,0,10"/>
+            <Button Content="Создать новый тест" Command="{Binding CreateTestCommand}" 
+                    Foreground="Black" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding Tests.Count, StringFormat='Всего тестов: {0}'}" 
+                       FontStyle="Italic" Margin="0,0,0,10"/>
+        </StackPanel>
+        
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" 
+                    Margin="10" Spacing="10">
             <Button Content="Обновить" Command="{Binding RefreshCommand}" Foreground="Black"/>
             <Button Content="Закрыть" Command="{Binding CloseCommand}" Foreground="Black"/>
         </StackPanel>
-    </StackPanel>
+        
+        <ScrollViewer Margin="10">
+            <StackPanel>
+                <ItemsControl ItemsSource="{Binding Tests}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,10" Padding="10"
+                                    Background="White" CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding Description}" FontSize="12" Foreground="Gray" Margin="0,0,0,5"/>
+                                    <TextBlock Text="{Binding Questions.Count, StringFormat='Количество вопросов: {0}'}" 
+                                               FontSize="12" Foreground="Blue" Margin="0,0,0,10"/>
+                                    
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Button Content="Редактировать" 
+                                                Command="{Binding $parent[Window].DataContext.EditTestCommand}" 
+                                                CommandParameter="{Binding}"
+                                                Foreground="Black" Background="LightBlue" Padding="5"/>
+                                        <Button Content="Удалить" 
+                                                Command="{Binding $parent[Window].DataContext.DeleteTestCommand}" 
+                                                CommandParameter="{Binding}"
+                                                Foreground="Black" Background="LightCoral" Padding="5"/>
+                                        <Button Content="Пройти тест" 
+                                                Command="{Binding $parent[Window].DataContext.SelectTestCommand}" 
+                                                CommandParameter="{Binding}"
+                                                Foreground="Black" Background="LightGreen" Padding="5"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                <TextBlock Text="Тесты не найдены. Создайте новый тест для начала работы." 
+                           FontStyle="Italic" 
+                           HorizontalAlignment="Center" 
+                           Margin="20"
+                           IsVisible="{Binding !Tests.Count}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
