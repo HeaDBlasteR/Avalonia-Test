@@ -78,6 +78,7 @@ namespace AvaloniaTests.ViewModels
             return (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow!;
         }
 
+        //Сохранение с валидацией   
         private void SafeSaveTest()
         {
             if (string.IsNullOrWhiteSpace(EditingTest.Title))

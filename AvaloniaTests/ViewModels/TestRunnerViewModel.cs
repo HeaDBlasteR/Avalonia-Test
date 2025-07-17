@@ -22,6 +22,7 @@ namespace AvaloniaTests.ViewModels
         private Dictionary<Guid, Guid> _userAnswers = new();
         private Guid? _selectedAnswer;
 
+        //Текущий вопрос
         public Question CurrentQuestion 
         { 
             get 
@@ -33,6 +34,7 @@ namespace AvaloniaTests.ViewModels
         public int QuestionNumber => _currentQuestionIndex + 1;
         public int TotalQuestions => _test.Questions.Count;
 
+        // ID выбранного ответа
         public Guid? SelectedAnswer
         {
             get => _selectedAnswer;

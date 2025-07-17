@@ -19,6 +19,7 @@ namespace AvaloniaTests.ViewModels
         private Window? _currentWindow;
         private int _resultsCount;
 
+        // Коллекция отображаемых результатов
         public ObservableCollection<TestResultDisplayItem> Results { get; } = new();
 
         public int ResultsCount
@@ -248,6 +249,7 @@ namespace AvaloniaTests.ViewModels
         }
     }
 
+    // Отображение информации о результате тестирования в списке
     public class TestResultDisplayItem : ViewModelBase
     {
         private TestResult? _result;

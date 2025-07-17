@@ -59,6 +59,7 @@ namespace AvaloniaTests.ViewModels
             LoadData();
         }
 
+        // Подписывает обработчик ошибок на исключения
         private void SubscribeToCommandErrors(ICommand command)
         {
             if (command is ReactiveCommand<Unit, Unit> reactiveCommand)
@@ -71,6 +72,7 @@ namespace AvaloniaTests.ViewModels
             }
         }
 
+        // Обратотка исключений
         private void HandleCommandException(Exception ex)
         {
             _errorDialogService.ShowError("Ошибка", $"Произошла ошибка: {ex.Message}");

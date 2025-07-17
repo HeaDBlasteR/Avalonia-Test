@@ -2,6 +2,7 @@
 
 namespace AvaloniaTests.ViewModels
 {
+    // Окно результатов сразу после тестирования
     public class ResultViewModel : ViewModelBase
     {
         public TestResult Result { get; }
