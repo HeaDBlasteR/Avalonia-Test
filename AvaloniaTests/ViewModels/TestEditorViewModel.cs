@@ -109,7 +109,7 @@ namespace AvaloniaTests.ViewModels
             currentWindow?.Close();
         }
 
-        private Window CreateStylishDialog(string title, int width = 600, int height = 500)
+        private Window CreateStylishDialog(string title, int width = 800, int height = 650)
         {
             var window = new Window
             {

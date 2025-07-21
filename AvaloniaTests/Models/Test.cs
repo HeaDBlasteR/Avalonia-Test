@@ -71,6 +71,7 @@ namespace AvaloniaTests.Models
             Questions = new ObservableCollection<Question>();
         }
 
+        //Синхронизирует коллекции вопросов и их идентификаторы после изменения теста
         public void FixCollections()
         {
             if (Id == Guid.Empty)
