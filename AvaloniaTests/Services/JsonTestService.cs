@@ -21,10 +21,7 @@ namespace AvaloniaTests.Services
         public JsonTestService()
         {
             var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AvaloniaTests");
-            if (!Directory.Exists(appDataPath))
-            {
-                Directory.CreateDirectory(appDataPath);
-            }
+            Directory.CreateDirectory(appDataPath);
             
             _testFilePath = Path.Combine(appDataPath, "tests.json");
             
@@ -110,62 +107,31 @@ namespace AvaloniaTests.Services
         {
             if (!File.Exists(_testFilePath))
             {
-                var directory = Path.GetDirectoryName(_testFilePath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-                
                 _tests = new List<Test>();
                 SaveTests();
                 return;
             }
 
-            try
-            {
-                var json = File.ReadAllText(_testFilePath, System.Text.Encoding.UTF8);
-                if (string.IsNullOrWhiteSpace(json))
-                {
-                    _tests = new List<Test>();
-                    return;
-                }
-
-                var loadedTests = JsonSerializer.Deserialize<List<Test>>(json, JsonOptions);
-                if (loadedTests != null)
-                {
-                    _tests = loadedTests.Where(t => t != null && !string.IsNullOrWhiteSpace(t.Title)).ToList();
-                    foreach (var test in _tests)
-                    {
-                        test.FixCollections();
-                    }
-                }
-                else
-                {
-                    _tests = new List<Test>();
-                }
-            }
-            catch
+            var json = File.ReadAllText(_testFilePath, System.Text.Encoding.UTF8);
+            if (string.IsNullOrWhiteSpace(json))
             {
                 _tests = new List<Test>();
+                return;
+            }
+
+            var loadedTests = JsonSerializer.Deserialize<List<Test>>(json, JsonOptions);
+            _tests = loadedTests?.Where(t => t != null && !string.IsNullOrWhiteSpace(t.Title)).ToList() ?? new List<Test>();
+            
+            foreach (var test in _tests)
+            {
+                test.FixCollections();
             }
         }
 
         private void SaveTests()
         {
-            try
-            {
-                var directory = Path.GetDirectoryName(_testFilePath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-                
-                var json = JsonSerializer.Serialize(_tests, JsonOptions);
-                File.WriteAllText(_testFilePath, json, System.Text.Encoding.UTF8);
-            }
-            catch
-            {
-            }
+            var json = JsonSerializer.Serialize(_tests, JsonOptions);
+            File.WriteAllText(_testFilePath, json, System.Text.Encoding.UTF8);
         }
     }
 }

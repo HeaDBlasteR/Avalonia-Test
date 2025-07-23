@@ -12,10 +12,5 @@ namespace AvaloniaTests.Models
         public int Score { get; set; }
         public int MaxScore { get; set; }
         public Dictionary<Guid, Guid> UserAnswers { get; set; } = new();
-
-        public void FixCollections()
-        {
-            UserAnswers ??= new Dictionary<Guid, Guid>();
-        }
     }
 }

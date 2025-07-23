@@ -5,7 +5,6 @@ using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System;
-using System.Reactive;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -14,7 +13,6 @@ namespace AvaloniaTests.ViewModels
         private readonly ITestService _testService;
         private readonly IResultService? _resultService;
         private readonly IWindowService _windowService;
-        private readonly IErrorDialogService _errorDialogService;
         private readonly Window _window;
         private readonly bool _selectMode;
         
@@ -41,163 +39,64 @@ namespace AvaloniaTests.ViewModels
             _selectMode = selectMode;
             _resultService = resultService;
             _windowService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IWindowService>(ServiceProvider.Instance);
-            _errorDialogService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IErrorDialogService>(ServiceProvider.Instance);
             
             EditTestCommand = ReactiveCommand.CreateFromTask<Test>(EditTestAsync);
             DeleteTestCommand = ReactiveCommand.Create<Test>(DeleteTest);
             CloseCommand = ReactiveCommand.Create(() => _window.Close());
             CreateTestCommand = ReactiveCommand.CreateFromTask(CreateTestAsync);
             SelectTestCommand = ReactiveCommand.CreateFromTask<Test>(SelectTestAsync);
-            RefreshCommand = ReactiveCommand.Create(Refresh);
-
-            SubscribeToCommandErrors(EditTestCommand);
-            SubscribeToCommandErrors(DeleteTestCommand);
-            SubscribeToCommandErrors(CloseCommand);
-            SubscribeToCommandErrors(CreateTestCommand);
-            SubscribeToCommandErrors(SelectTestCommand);
-            SubscribeToCommandErrors(RefreshCommand);
+            RefreshCommand = ReactiveCommand.Create(LoadTests);
 
             LoadTests();
         }
 
-        private void SubscribeToCommandErrors(ICommand command)
-        {
-            if (command is ReactiveCommand<Unit, Unit> reactiveCommand)
-            {
-                reactiveCommand.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-            else if (command is IReactiveCommand reactiveCommandGeneric)
-            {
-                reactiveCommandGeneric.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-        }
-
-        private void HandleCommandException(Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Ошибка в команде TestList: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
-
-            try
-            {
-                _errorDialogService.ShowError("Ошибка", $"Произошла ошибка: {ex.Message}");
-            }
-            catch
-            {
-            }
-        }
-
         public void LoadTests()
         {
-            try
-            {
-                var testsFromService = _testService.GetTests();
+            var testsFromService = _testService.GetTests();
+            Tests.Clear();
 
-                Tests.Clear();
-
-                foreach (var test in testsFromService)
-                {
-                    if (test.Questions == null)
-                    {
-                        test.FixCollections();
-                    }
-                    
-                    Tests.Add(test);
-                }
-                
-                this.RaisePropertyChanged(nameof(Tests));
-            }
-            catch (Exception ex)
+            foreach (var test in testsFromService)
             {
-                HandleCommandException(ex);
+                test.FixCollections();
+                Tests.Add(test);
             }
-        }
-
-        public void Refresh()
-        {
-            try
-            {
-                LoadTests();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            
+            this.RaisePropertyChanged(nameof(Tests));
         }
 
         private async System.Threading.Tasks.Task CreateTestAsync()
         {
-            try
+            var result = await _windowService.ShowTestEditorAsync();
+            if (result)
             {
-                var result = await _windowService.ShowTestEditorAsync();
-                if (result)
-                {
-                    LoadTests();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
+                LoadTests();
             }
         }
 
         private async System.Threading.Tasks.Task EditTestAsync(Test test)
         {
-            try
+            var result = await _windowService.ShowTestEditorAsync(test);
+            if (result)
             {
-                var result = await _windowService.ShowTestEditorAsync(test);
-                if (result)
-                {
-                    LoadTests();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
+                LoadTests();
             }
         }
 
         private void DeleteTest(Test test)
         {
-            try
-            {
-                _testService.DeleteTest(test.Id);
-                LoadTests();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            _testService.DeleteTest(test.Id);
+            LoadTests();
         }
 
         private async System.Threading.Tasks.Task SelectTestAsync(Test test)
         {
-            try
+            if (_selectMode && _resultService != null)
             {
-                if (_selectMode && _resultService != null)
+                var result = await _windowService.ShowTestRunnerAsync(test);
+                if (result)
                 {
-                    if (test.Questions == null || test.Questions.Count == 0)
-                    {
-                        return;
-                    }
-
-                    foreach (var question in test.Questions)
-                    {
-                        if (question.Answers == null || question.Answers.Count == 0)
-                        {
-                            return;
-                        }
-                    }
-
-                    var result = await _windowService.ShowTestRunnerAsync(test);
-                    if (result)
-                    {
-                        _window.Close();
-                    }
+                    _window.Close();
                 }
-            }
-            catch (Exception ex)
-            {
-                throw;
             }
         }
     }

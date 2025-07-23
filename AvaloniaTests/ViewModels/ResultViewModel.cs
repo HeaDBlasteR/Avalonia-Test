@@ -17,7 +17,7 @@ namespace AvaloniaTests.ViewModels
 
         public ResultViewModel(TestResult result, Test? test)
         {
-            Result = result ?? throw new System.ArgumentNullException(nameof(result));
+            Result = result;
             Test = test;
         }
     }

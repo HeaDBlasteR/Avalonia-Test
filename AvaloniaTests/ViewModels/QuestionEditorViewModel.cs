@@ -1,16 +1,13 @@
 using AvaloniaTests.Models;
-using AvaloniaTests.Services;
 using ReactiveUI;
 using System;
 using System.Linq;
 using System.Windows.Input;
-using System.Reactive;
 
 namespace AvaloniaTests.ViewModels
 {
     public class QuestionEditorViewModel : ViewModelBase
     {
-        private readonly IErrorDialogService _errorDialogService;
         private Question _editingQuestion = null!;
         private bool _isEditMode;
 
@@ -38,9 +35,6 @@ namespace AvaloniaTests.ViewModels
 
         public QuestionEditorViewModel(Question? question = null)
         {
-            _errorDialogService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions
-                .GetRequiredService<IErrorDialogService>(ServiceProvider.Instance);
-
             IsEditMode = question != null;
             EditingQuestion = question != null ? CreateCopyOfQuestion(question) : CreateNewQuestion();
 
@@ -50,19 +44,11 @@ namespace AvaloniaTests.ViewModels
             RemoveAnswerCommand = ReactiveCommand.Create<Answer>(RemoveAnswer);
             SetCorrectAnswerCommand = ReactiveCommand.Create<Answer>(SetCorrectAnswer);
 
-            SubscribeToCommandErrors(SaveCommand);
-            SubscribeToCommandErrors(CancelCommand);
-            SubscribeToCommandErrors(AddAnswerCommand);
-            SubscribeToCommandErrors(RemoveAnswerCommand);
-            SubscribeToCommandErrors(SetCorrectAnswerCommand);
-
-            // Подписываемся на изменения коллекции ответов для обновления CanRemoveAnswers
             EditingQuestion.Answers.CollectionChanged += (s, e) => 
             {
                 this.RaisePropertyChanged(nameof(CanRemoveAnswers));
             };
 
-            // Подписываемся на изменения IsEditMode для обновления WindowTitle
             this.WhenAnyValue(x => x.IsEditMode)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(WindowTitle)));
         }
@@ -93,51 +79,8 @@ namespace AvaloniaTests.ViewModels
             return copy;
         }
 
-        private void SubscribeToCommandErrors(ICommand command)
-        {
-            if (command is ReactiveCommand<Unit, Unit> reactiveCommand)
-            {
-                reactiveCommand.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-            else if (command is IReactiveCommand reactiveCommandGeneric)
-            {
-                reactiveCommandGeneric.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-        }
-
-        private void HandleCommandException(Exception ex)
-        {
-            _errorDialogService.ShowError("Ошибка", $"Произошла ошибка: {ex.Message}");
-        }
-
         private void Save()
         {
-            if (string.IsNullOrWhiteSpace(EditingQuestion.Text))
-            {
-                _errorDialogService.ShowError("Ошибка валидации", "Пожалуйста, введите текст вопроса!");
-                return;
-            }
-
-            if (EditingQuestion.Answers.Count < 2)
-            {
-                _errorDialogService.ShowError("Ошибка валидации", "Вопрос должен содержать минимум 2 варианта ответа!");
-                return;
-            }
-
-            if (EditingQuestion.Answers.Any(a => string.IsNullOrWhiteSpace(a.Text)))
-            {
-                _errorDialogService.ShowError("Ошибка валидации", "Все варианты ответов должны быть заполнены!");
-                return;
-            }
-
-            if (EditingQuestion.CorrectAnswerId == Guid.Empty || 
-                !EditingQuestion.Answers.Any(a => a.Id == EditingQuestion.CorrectAnswerId))
-            {
-                _errorDialogService.ShowError("Ошибка валидации", "Пожалуйста, выберите правильный ответ!");
-                return;
-            }
-
-            // Генерируем ID для новых элементов
             if (EditingQuestion.Id == Guid.Empty)
                 EditingQuestion.Id = Guid.NewGuid();
 
@@ -147,7 +90,6 @@ namespace AvaloniaTests.ViewModels
                     answer.Id = Guid.NewGuid();
             }
 
-            // Синхронизируем данные для сериализации
             EditingQuestion.AnswersData = EditingQuestion.Answers.ToList();
 
             CloseWithResult(true);
@@ -165,12 +107,6 @@ namespace AvaloniaTests.ViewModels
 
         private void RemoveAnswer(Answer answer)
         {
-            if (EditingQuestion.Answers.Count <= 2)
-            {
-                _errorDialogService.ShowError("Предупреждение", "Вопрос должен содержать минимум 2 варианта ответа!");
-                return;
-            }
-
             EditingQuestion.Answers.Remove(answer);
             
             if (EditingQuestion.CorrectAnswerId == answer.Id)
@@ -186,22 +122,15 @@ namespace AvaloniaTests.ViewModels
 
         private void CloseWithResult(bool result)
         {
-            try
+            if (Avalonia.Application.Current?.ApplicationLifetime is 
+                Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
             {
-                if (Avalonia.Application.Current?.ApplicationLifetime is 
-                    Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
+                var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
+                
+                if (currentWindow != null && currentWindow != desktop.MainWindow)
                 {
-                    var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
-                    
-                    if (currentWindow != null && currentWindow != desktop.MainWindow)
-                    {
-                        currentWindow.Close(result);
-                    }
+                    currentWindow.Close(result);
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Ошибка при закрытии окна редактора вопросов: {ex.Message}");
             }
         }
     }

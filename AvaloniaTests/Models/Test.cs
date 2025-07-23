@@ -22,11 +22,8 @@ namespace AvaloniaTests.Models
             get => _title;
             set
             {
-                if (_title != value)
-                {
-                    _title = value;
-                    OnPropertyChanged();
-                }
+                _title = value;
+                OnPropertyChanged();
             }
         }
         
@@ -36,11 +33,8 @@ namespace AvaloniaTests.Models
             get => _description;
             set
             {
-                if (_description != value)
-                {
-                    _description = value;
-                    OnPropertyChanged();
-                }
+                _description = value;
+                OnPropertyChanged();
             }
         }
         
@@ -74,12 +68,6 @@ namespace AvaloniaTests.Models
         //Синхронизирует коллекции вопросов и их идентификаторы после изменения теста
         public void FixCollections()
         {
-            if (Id == Guid.Empty)
-                Id = Guid.NewGuid();
-                
-            if (QuestionsData == null)
-                QuestionsData = new List<Question>();
-                
             Questions = new ObservableCollection<Question>(QuestionsData);
 
             foreach (var question in Questions)
@@ -97,7 +85,6 @@ namespace AvaloniaTests.Models
             }
             
             QuestionsData = Questions.ToList();
-            
             OnPropertyChanged(nameof(Questions));
         }
 

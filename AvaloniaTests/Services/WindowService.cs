@@ -27,173 +27,112 @@ namespace AvaloniaTests.Services
 
         public async Task<bool> ShowTestEditorAsync(Test? testToEdit = null)
         {
-            try
+            var testService = _serviceProvider.GetRequiredService<ITestService>();
+            var viewModel = new TestEditorViewModel(testService, testToEdit);
+            var window = new TestEditorWindow(viewModel);
+            
+            var mainWindow = GetMainWindow();
+            if (mainWindow != null)
             {
-                var testService = _serviceProvider.GetRequiredService<ITestService>();
-                var viewModel = new TestEditorViewModel(testService, testToEdit);
-                var window = new TestEditorWindow(viewModel);
-                
-                var mainWindow = GetMainWindow();
-                if (mainWindow != null)
-                {
-                    var result = await window.ShowDialog<bool?>(mainWindow);
-                    return result == true;
-                }
-                
-                window.Show();
-                return false;
+                var result = await window.ShowDialog<bool?>(mainWindow);
+                return result == true;
             }
-            catch (Exception ex)
-            {
-                var errorService = _serviceProvider.GetRequiredService<IErrorDialogService>();
-                errorService.ShowError("Ошибка", $"Не удалось открыть редактор тестов: {ex.Message}");
-                return false;
-            }
+            
+            window.Show();
+            return false;
         }
 
         public async Task<bool> ShowTestRunnerAsync(Test test)
         {
-            try
+            var resultService = _serviceProvider.GetRequiredService<IResultService>();
+            var viewModel = new TestRunnerViewModel(test, resultService);
+            var window = new TestRunnerWindow(viewModel);
+            
+            var mainWindow = GetMainWindow();
+            if (mainWindow != null)
             {
-                var resultService = _serviceProvider.GetRequiredService<IResultService>();
-                var viewModel = new TestRunnerViewModel(test, resultService);
-                var window = new TestRunnerWindow(viewModel);
-                
-                var mainWindow = GetMainWindow();
-                if (mainWindow != null)
-                {
-                    var result = await window.ShowDialog<bool?>(mainWindow);
-                    return result == true;
-                }
-                
-                window.Show();
-                return false;
+                var result = await window.ShowDialog<bool?>(mainWindow);
+                return result == true;
             }
-            catch (Exception ex)
-            {
-                var errorService = _serviceProvider.GetRequiredService<IErrorDialogService>();
-                errorService.ShowError("Ошибка", $"Не удалось открыть тест: {ex.Message}");
-                return false;
-            }
+            
+            window.Show();
+            return false;
         }
 
         public async Task ShowResultViewerAsync(TestResult result, Test? test)
         {
-            try
+            var viewModel = new ResultViewModel(result, test);
+            var window = new ResultWindow(viewModel);
+            
+            var mainWindow = GetMainWindow();
+            if (mainWindow != null)
             {
-                var viewModel = new ResultViewModel(result, test);
-                var window = new ResultWindow(viewModel);
-                
-                var mainWindow = GetMainWindow();
-                if (mainWindow != null)
-                {
-                    await window.ShowDialog(mainWindow);
-                }
-                else
-                {
-                    window.Show();
-                }
+                await window.ShowDialog(mainWindow);
             }
-            catch (Exception ex)
+            else
             {
-                var errorService = _serviceProvider.GetRequiredService<IErrorDialogService>();
-                errorService.ShowError("Ошибка", $"Не удалось открыть результат: {ex.Message}");
+                window.Show();
             }
         }
 
         public async Task<bool> ShowTestListAsync(bool selectMode = false)
         {
-            try
+            var testService = _serviceProvider.GetRequiredService<ITestService>();
+            var resultService = selectMode ? _serviceProvider.GetRequiredService<IResultService>() : null;
+            
+            var window = new TestListWindow(testService, resultService, selectMode);
+            
+            var mainWindow = GetMainWindow();
+            if (mainWindow != null)
             {
-                var testService = _serviceProvider.GetRequiredService<ITestService>();
-                var resultService = selectMode ? _serviceProvider.GetRequiredService<IResultService>() : null;
-                
-                var window = new TestListWindow(testService, resultService, selectMode);
-                
-                var mainWindow = GetMainWindow();
-                if (mainWindow != null)
-                {
-                    var result = await window.ShowDialog<bool?>(mainWindow);
-                    return result == true;
-                }
-                
-                window.Show();
-                return false;
+                var result = await window.ShowDialog<bool?>(mainWindow);
+                return result == true;
             }
-            catch (Exception ex)
-            {
-                var errorService = _serviceProvider.GetRequiredService<IErrorDialogService>();
-                errorService.ShowError("Ошибка", $"Не удалось открыть список тестов: {ex.Message}");
-                return false;
-            }
+            
+            window.Show();
+            return false;
         }
 
         public async Task<bool> ShowResultsListAsync()
         {
-            try
+            var resultService = _serviceProvider.GetRequiredService<IResultService>();
+            var testService = _serviceProvider.GetRequiredService<ITestService>();
+            
+            var mainWindow = GetMainWindow();
+            var viewModel = new ResultsListViewModel(resultService, testService, mainWindow);
+            var window = new ResultsListWindow(viewModel);
+            
+            if (mainWindow != null)
             {
-                var resultService = _serviceProvider.GetRequiredService<IResultService>();
-                var testService = _serviceProvider.GetRequiredService<ITestService>();
-                
-                var mainWindow = GetMainWindow();
-                var viewModel = new ResultsListViewModel(resultService, testService, mainWindow);
-                var window = new ResultsListWindow(viewModel);
-                
-                if (mainWindow != null)
-                {
-                    var result = await window.ShowDialog<bool?>(mainWindow);
-                    return result == true;
-                }
-                
-                window.Show();
-                return false;
+                var result = await window.ShowDialog<bool?>(mainWindow);
+                return result == true;
             }
-            catch (Exception ex)
-            {
-                var errorService = _serviceProvider.GetRequiredService<IErrorDialogService>();
-                errorService.ShowError("Ошибка", $"Не удалось открыть список результатов: {ex.Message}");
-                return false;
-            }
+            
+            window.Show();
+            return false;
         }
 
         public async Task<Question?> ShowQuestionEditorAsync(Question? question = null)
         {
-            try
+            var viewModel = new QuestionEditorViewModel(question);
+            var window = new QuestionEditorWindow(viewModel);
+            
+            var mainWindow = GetMainWindow();
+            if (mainWindow != null)
             {
-                var viewModel = new QuestionEditorViewModel(question);
-                var window = new QuestionEditorWindow(viewModel);
-                
-                var mainWindow = GetMainWindow();
-                if (mainWindow != null)
-                {
-                    var result = await window.ShowDialog<bool?>(mainWindow);
-                    return result == true ? viewModel.EditingQuestion : null;
-                }
-                
-                window.Show();
-                return null;
+                var result = await window.ShowDialog<bool?>(mainWindow);
+                return result == true ? viewModel.EditingQuestion : null;
             }
-            catch (Exception ex)
-            {
-                var errorService = _serviceProvider.GetRequiredService<IErrorDialogService>();
-                errorService.ShowError("Ошибка", $"Не удалось открыть редактор вопросов: {ex.Message}");
-                return null;
-            }
+            
+            window.Show();
+            return null;
         }
 
         public void CloseCurrentWindow()
         {
-            try
-            {
-                var windows = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Windows;
-                var currentWindow = windows?.LastOrDefault(w => w.IsActive);
-                currentWindow?.Close();
-            }
-            catch (Exception ex)
-            {
-                var errorService = _serviceProvider.GetRequiredService<IErrorDialogService>();
-                errorService.ShowError("Ошибка", $"Не удалось закрыть окно: {ex.Message}");
-            }
+            var windows = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Windows;
+            var currentWindow = windows?.LastOrDefault(w => w.IsActive);
+            currentWindow?.Close();
         }
     }
 }

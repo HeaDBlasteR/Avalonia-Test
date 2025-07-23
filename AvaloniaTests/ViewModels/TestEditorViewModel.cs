@@ -7,14 +7,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Reactive;
 
 namespace AvaloniaTests.ViewModels
 {
     public class TestEditorViewModel : ViewModelBase
     {
         private readonly ITestService _testService;
-        private readonly IErrorDialogService _errorDialogService;
         private readonly IDialogService _dialogService;
         private Test _editingTest = null!;
 
@@ -35,7 +33,6 @@ namespace AvaloniaTests.ViewModels
         public TestEditorViewModel(ITestService testService, Test? testToEdit = null)
         {
             _testService = testService;
-            _errorDialogService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IErrorDialogService>(ServiceProvider.Instance);
             _dialogService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IDialogService>(ServiceProvider.Instance);
             EditingTest = testToEdit ?? new Test("", "");
 
@@ -46,52 +43,21 @@ namespace AvaloniaTests.ViewModels
             RemoveAnswerCommand = ReactiveCommand.Create<Answer>(RemoveAnswer);
             EditQuestionCommand = ReactiveCommand.CreateFromTask<Question>(EditQuestionAsync);
             SetCorrectAnswerCommand = ReactiveCommand.Create<object[]>(SetCorrectAnswer);
-
-            SubscribeToCommandErrors(SaveCommand);
-            SubscribeToCommandErrors(AddQuestionCommand);
-            SubscribeToCommandErrors(RemoveQuestionCommand);
-            SubscribeToCommandErrors(AddAnswerCommand);
-            SubscribeToCommandErrors(RemoveAnswerCommand);
-            SubscribeToCommandErrors(EditQuestionCommand);
-            SubscribeToCommandErrors(SetCorrectAnswerCommand);
-        }
-
-        private void SubscribeToCommandErrors(ICommand command)
-        {
-            if (command is ReactiveCommand<Unit, Unit> reactiveCommand)
-            {
-                reactiveCommand.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-            else if (command is IReactiveCommand reactiveCommandGeneric)
-            {
-                reactiveCommandGeneric.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-        }
-
-        private void HandleCommandException(Exception ex)
-        {
-            _errorDialogService.ShowError("Ошибка", $"Произошла ошибка: {ex.Message}");
         }
 
         //Сохранение с валидацией   
         private void SafeSaveTest()
         {
-            if (string.IsNullOrWhiteSpace(EditingTest.Title))
-            {
-                _errorDialogService.ShowError("Ошибка валидации", "Пожалуйста, введите название теста!");
-                return;
-            }
-
-            EditingTest.QuestionsData = EditingTest.Questions?.ToList() ?? new System.Collections.Generic.List<Question>();
+            EditingTest.QuestionsData = EditingTest.Questions.ToList();
             
-            foreach (var question in EditingTest.Questions ?? new System.Collections.ObjectModel.ObservableCollection<Question>())
+            foreach (var question in EditingTest.Questions)
             {
                 if (question.Id == Guid.Empty)
                     question.Id = Guid.NewGuid();
 
-                question.AnswersData = question.Answers?.ToList() ?? new System.Collections.Generic.List<Answer>();
+                question.AnswersData = question.Answers.ToList();
                 
-                foreach (var answer in question.Answers ?? new System.Collections.ObjectModel.ObservableCollection<Answer>())
+                foreach (var answer in question.Answers)
                 {
                     if (answer.Id == Guid.Empty)
                         answer.Id = Guid.NewGuid();
@@ -104,23 +70,14 @@ namespace AvaloniaTests.ViewModels
 
         private void CloseTestEditorWindow()
         {
-            try
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
+                
+                if (currentWindow != null && currentWindow != desktop.MainWindow)
                 {
-                    var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
-                    
-                    // Закрываем только окно редактора теста, не затрагивая главное
-                    if (currentWindow != null && currentWindow != desktop.MainWindow)
-                    {
-                        currentWindow.Close(true);
-                    }
+                    currentWindow.Close(true);
                 }
-            }
-            catch (Exception ex)
-            {
-                // В случае ошибки логируем и не блокируем выполнение
-                System.Diagnostics.Debug.WriteLine($"Ошибка при закрытии окна редактора теста: {ex.Message}");
             }
         }
 
@@ -166,7 +123,6 @@ namespace AvaloniaTests.ViewModels
             var editedQuestion = await _dialogService.ShowQuestionEditorAsync(question);
             if (editedQuestion != null)
             {
-                // Копируем изменения обратно в оригинальный вопрос
                 question.Text = editedQuestion.Text;
                 question.Answers.Clear();
                 foreach (var answer in editedQuestion.Answers)

@@ -5,7 +5,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using System.Reactive;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -13,7 +12,6 @@ namespace AvaloniaTests.ViewModels
     {
         private readonly ITestService _testService;
         private readonly IResultService _resultService;
-        private readonly IErrorDialogService _errorDialogService;
         private readonly IWindowService _windowService;
 
         public ObservableCollection<Test> Tests { get; } = new();
@@ -33,7 +31,6 @@ namespace AvaloniaTests.ViewModels
         {
             _testService = testService;
             _resultService = resultService;
-            _errorDialogService = errorDialogService;
             _windowService = windowService;
 
             CreateTestCommand = ReactiveCommand.CreateFromTask(CreateTestAsync);
@@ -45,35 +42,7 @@ namespace AvaloniaTests.ViewModels
             StartTestCommand = ReactiveCommand.CreateFromTask(OpenStartTestWindowAsync);
             OpenResultsTabCommand = ReactiveCommand.CreateFromTask(OpenResultsTabAsync);
 
-            SubscribeToCommandErrors(CreateTestCommand);
-            SubscribeToCommandErrors(EditTestCommand);
-            SubscribeToCommandErrors(DeleteTestCommand);
-            SubscribeToCommandErrors(TakeTestCommand);
-            SubscribeToCommandErrors(ViewResultsCommand);
-            SubscribeToCommandErrors(OpenTestListCommand);
-            SubscribeToCommandErrors(StartTestCommand);
-            SubscribeToCommandErrors(OpenResultsTabCommand);
-
             LoadData();
-        }
-
-        // Подписывает обработчик ошибок на исключения
-        private void SubscribeToCommandErrors(ICommand command)
-        {
-            if (command is ReactiveCommand<Unit, Unit> reactiveCommand)
-            {
-                reactiveCommand.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-            else if (command is IReactiveCommand reactiveCommandGeneric)
-            {
-                reactiveCommandGeneric.ThrownExceptions.Subscribe(HandleCommandException);
-            }
-        }
-
-        // Обработка исключений
-        private void HandleCommandException(Exception ex)
-        {
-            _errorDialogService.ShowError("Ошибка", $"Произошла ошибка: {ex.Message}");
         }
 
         private void LoadData()

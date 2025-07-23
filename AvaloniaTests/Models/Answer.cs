@@ -19,7 +19,7 @@ namespace AvaloniaTests.Models
         public Answer(string text)
         {
             Id = Guid.NewGuid();
-            Text = text ?? "";
+            Text = text;
         }
     }
 }

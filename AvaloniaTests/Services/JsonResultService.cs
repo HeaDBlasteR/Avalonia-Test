@@ -22,10 +22,7 @@ namespace AvaloniaTests.Services
         public JsonResultService()
         {
             var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AvaloniaTests");
-            if (!Directory.Exists(appDataPath))
-            {
-                Directory.CreateDirectory(appDataPath);
-            }
+            Directory.CreateDirectory(appDataPath);
             
             _resultsFilePath = Path.Combine(appDataPath, "results.json");
             
@@ -99,8 +96,6 @@ namespace AvaloniaTests.Services
                 result.Id = Guid.NewGuid();
             }
             
-            result.FixCollections();
-            
             _results.Add(result);
             SaveResults();
         }
@@ -119,12 +114,6 @@ namespace AvaloniaTests.Services
         {
             if (!File.Exists(_resultsFilePath))
             {
-                var directory = Path.GetDirectoryName(_resultsFilePath);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-                
                 _results = new List<TestResult>();
                 SaveResults();
                 return;
@@ -139,27 +128,13 @@ namespace AvaloniaTests.Services
             }
 
             var loadedResults = JsonSerializer.Deserialize<List<TestResult>>(json, JsonOptions);
-            if (loadedResults != null)
-            {
-                _results = loadedResults.Where(r => r != null).ToList();
-                foreach (var result in _results)
-                {
-                    result.FixCollections();
-                }
-            }
-            else
-            {
-                _results = new List<TestResult>();
-            }
+            _results = loadedResults?.Where(r => r != null).ToList() ?? new List<TestResult>();
         }
 
         private void SaveResults()
         {
             var directory = Path.GetDirectoryName(_resultsFilePath);
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory!);
-            }
+            Directory.CreateDirectory(directory!);
             
             var json = JsonSerializer.Serialize(_results, JsonOptions);
             File.WriteAllText(_resultsFilePath, json, System.Text.Encoding.UTF8);

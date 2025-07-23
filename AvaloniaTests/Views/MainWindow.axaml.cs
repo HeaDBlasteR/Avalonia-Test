@@ -14,7 +14,6 @@ namespace AvaloniaTests.Views
             InitializeComponent();
             DataContext = AvaloniaTests.ServiceProvider.Instance.GetRequiredService<MainWindowViewModel>();
             
-            Closing += OnMainWindowClosing;
             Closed += OnMainWindowClosed;
         }
 
@@ -23,39 +22,14 @@ namespace AvaloniaTests.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void OnMainWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
-        {
-            try
-            {
-                e.Cancel = false;
-                
-                System.Diagnostics.Debug.WriteLine("Главное окно закрывается...");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Ошибка при закрытии главного окна: {ex.Message}");
-                e.Cancel = false;
-            }
-        }
-
         private void OnMainWindowClosed(object? sender, EventArgs e)
         {
-            try
+            if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
             {
-                System.Diagnostics.Debug.WriteLine("Главное окно закрыто. Завершаем приложение...");
-                
-                if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
-                {
-                    lifetime.Shutdown(0);
-                }
-                else
-                {
-                    Environment.Exit(0);
-                }
+                lifetime.Shutdown(0);
             }
-            catch (Exception ex)
+            else
             {
-                System.Diagnostics.Debug.WriteLine($"Критическая ошибка при завершении приложения: {ex.Message}");
                 Environment.Exit(0);
             }
         }

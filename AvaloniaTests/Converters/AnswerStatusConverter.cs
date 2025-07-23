@@ -9,7 +9,7 @@ namespace AvaloniaTests.Converters
     {
         public static AnswerStatusConverter Instance { get; } = new();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is Question question && parameter is TestResult result)
             {
@@ -22,9 +22,9 @@ namespace AvaloniaTests.Converters
             return string.Empty;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return new NotImplementedException();
         }
     }
 
@@ -32,7 +32,7 @@ namespace AvaloniaTests.Converters
     {
         public static EqualityConverter Instance { get; } = new();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null || parameter == null)
                 return false;
@@ -48,9 +48,9 @@ namespace AvaloniaTests.Converters
             return value.Equals(parameter);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return new NotImplementedException();
         }
     }
 }
