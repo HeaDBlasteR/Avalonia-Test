@@ -113,6 +113,8 @@ namespace AvaloniaTests.ViewModels
             {
                 EditingQuestion.CorrectAnswerId = EditingQuestion.Answers.FirstOrDefault()?.Id ?? Guid.Empty;
             }
+            
+            this.RaisePropertyChanged(nameof(CanRemoveAnswers));
         }
 
         private void SetCorrectAnswer(Answer answer)

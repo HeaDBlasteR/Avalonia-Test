@@ -111,8 +111,10 @@ namespace AvaloniaTests.ViewModels
                     question.Answers.Remove(answer);
                     if (question.CorrectAnswerId == answer.Id)
                     {
-                        question.CorrectAnswerId = Guid.Empty;
+                        question.CorrectAnswerId = question.Answers.FirstOrDefault()?.Id ?? Guid.Empty;
                     }
+                    
+                    this.RaisePropertyChanged(nameof(EditingTest));
                     break;
                 }
             }

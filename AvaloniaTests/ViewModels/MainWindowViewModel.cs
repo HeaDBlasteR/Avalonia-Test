@@ -1,7 +1,6 @@
 ﻿using AvaloniaTests.Models;
 using AvaloniaTests.Services;
 using ReactiveUI;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;

@@ -1,18 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 namespace AvaloniaTests.Models
 {
-    public class Question
+    public class Question : INotifyPropertyChanged
     {
+        private string _text = "";
+        private Guid _correctAnswerId = Guid.Empty;
+
         [JsonPropertyName("Id")]
         public Guid Id { get; set; }
         
         [JsonPropertyName("Text")]
-        public string Text { get; set; }
+        public string Text 
+        { 
+            get => _text;
+            set
+            {
+                _text = value;
+                OnPropertyChanged();
+            }
+        }
         
         [JsonPropertyName("Answers")]
         public List<Answer> AnswersData { get; set; }
@@ -21,7 +34,17 @@ namespace AvaloniaTests.Models
         public ObservableCollection<Answer> Answers { get; set; }
         
         [JsonPropertyName("CorrectAnswerId")]
-        public Guid CorrectAnswerId { get; set; }
+        public Guid CorrectAnswerId 
+        { 
+            get => _correctAnswerId;
+            set
+            {
+                _correctAnswerId = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public Question()
         {
@@ -51,6 +74,11 @@ namespace AvaloniaTests.Models
             }
             
             AnswersData = Answers.ToList();
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
