@@ -5,7 +5,7 @@
         mc:Ignorable="d"
         x:Class="AvaloniaTests.Views.TestListWindow"
         Title="Список Тестов"
-		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
+		Icon="avares://AvaloniaTests/Assets/Pudge.jpg"
 		Background="#FFF5E6CC"
         Foreground="Black"
         Width="800" Height="600"

@@ -49,15 +49,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Assets\avalonia-logo.ico">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Resource>
-	  <Resource Include="Assets\photo.jpg">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Resource>
-		<Resource Include="Assets\Pudge.jpg">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Resource>
+	  <AvaloniaResource Include="Assets\avalonia-logo.ico" />
+	  <AvaloniaResource Include="Assets\photo.jpg" />
+		<AvaloniaResource Include="Assets\Pudge.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>

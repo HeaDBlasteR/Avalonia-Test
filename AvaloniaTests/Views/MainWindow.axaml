@@ -3,12 +3,12 @@
         x:Class="AvaloniaTests.Views.MainWindow"
         WindowState="Maximized"
         WindowStartupLocation="CenterOwner"
-		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
+		Icon="avares://AvaloniaTests/Assets/Pudge.jpg"
         Title="Система Тестирования"
         x:Name="root">
 
     <Window.Background>
-        <ImageBrush Source="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\photo.jpg" 
+        <ImageBrush Source="avares://AvaloniaTests/Assets/photo.jpg" 
                     Stretch="UniformToFill"/>
     </Window.Background>
 

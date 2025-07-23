@@ -55,8 +55,7 @@ namespace AvaloniaTests.Services
                             var possiblePaths = new[]
                             {
                                 Path.Combine(currentDir, "AvaloniaTests", "results.json"),
-                                Path.Combine(currentDir, "results.json"),
-                                @"C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\results.json"
+                                Path.Combine(currentDir, "results.json")
                             };
 
                             bool found = false;

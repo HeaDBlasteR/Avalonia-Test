@@ -6,7 +6,7 @@
         Width="950"
         Height="650"
         WindowStartupLocation="CenterOwner"
-        Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
+        Icon="avares://AvaloniaTests/Assets/Pudge.jpg"
         Title="Результаты Тестов"
         Background="#FFF5E6CC"
         Foreground="Black"

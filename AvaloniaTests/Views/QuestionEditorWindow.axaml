@@ -7,6 +7,7 @@
         Title="{Binding WindowTitle}"
         Width="800"
         Height="650"
+		Icon="avares://AvaloniaTests/Assets/Pudge.jpg"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
         Background="#F5F5DC">
