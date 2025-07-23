@@ -1,10 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using AvaloniaTests.Models;
-using AvaloniaTests.Views;
+﻿using AvaloniaTests.Models;
 using AvaloniaTests.Services;
-using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
@@ -19,6 +14,7 @@ namespace AvaloniaTests.ViewModels
         private readonly ITestService _testService;
         private readonly IResultService _resultService;
         private readonly IErrorDialogService _errorDialogService;
+        private readonly IWindowService _windowService;
 
         public ObservableCollection<Test> Tests { get; } = new();
         public ObservableCollection<TestResult> Results { get; } = new();
@@ -32,20 +28,22 @@ namespace AvaloniaTests.ViewModels
         public ICommand StartTestCommand { get; }
         public ICommand OpenResultsTabCommand { get; }
 
-        public MainWindowViewModel(ITestService testService, IResultService resultService, IErrorDialogService errorDialogService)
+        public MainWindowViewModel(ITestService testService, IResultService resultService, 
+            IErrorDialogService errorDialogService, IWindowService windowService)
         {
             _testService = testService;
             _resultService = resultService;
             _errorDialogService = errorDialogService;
+            _windowService = windowService;
 
-            CreateTestCommand = ReactiveCommand.Create(CreateTest);
-            EditTestCommand = ReactiveCommand.Create<Test>(EditTest);
+            CreateTestCommand = ReactiveCommand.CreateFromTask(CreateTestAsync);
+            EditTestCommand = ReactiveCommand.CreateFromTask<Test>(EditTestAsync);
             DeleteTestCommand = ReactiveCommand.Create<Test>(DeleteTest);
-            TakeTestCommand = ReactiveCommand.Create<Test>(TakeTest);
-            ViewResultsCommand = ReactiveCommand.Create<TestResult>(ViewResult);
-            OpenTestListCommand = ReactiveCommand.Create(OpenTestList);
-            StartTestCommand = ReactiveCommand.Create(OpenStartTestWindow);
-            OpenResultsTabCommand = ReactiveCommand.Create(OpenResultsTab);
+            TakeTestCommand = ReactiveCommand.CreateFromTask<Test>(TakeTestAsync);
+            ViewResultsCommand = ReactiveCommand.CreateFromTask<TestResult>(ViewResultAsync);
+            OpenTestListCommand = ReactiveCommand.CreateFromTask(OpenTestListAsync);
+            StartTestCommand = ReactiveCommand.CreateFromTask(OpenStartTestWindowAsync);
+            OpenResultsTabCommand = ReactiveCommand.CreateFromTask(OpenResultsTabAsync);
 
             SubscribeToCommandErrors(CreateTestCommand);
             SubscribeToCommandErrors(EditTestCommand);
@@ -72,7 +70,7 @@ namespace AvaloniaTests.ViewModels
             }
         }
 
-        // Обратотка исключений
+        // Обработка исключений
         private void HandleCommandException(Exception ex)
         {
             _errorDialogService.ShowError("Ошибка", $"Произошла ошибка: {ex.Message}");
@@ -97,25 +95,22 @@ namespace AvaloniaTests.ViewModels
             }
         }
 
-        private static Window GetMainWindow()
+        private async System.Threading.Tasks.Task CreateTestAsync()
         {
-            return (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow!;
+            var result = await _windowService.ShowTestEditorAsync();
+            if (result)
+            {
+                LoadData();
+            }
         }
 
-        private void CreateTest()
+        private async System.Threading.Tasks.Task EditTestAsync(Test test)
         {
-            var editorViewModel = new TestEditorViewModel(_testService);
-            var editorWindow = new TestEditorWindow(editorViewModel);
-            editorWindow.ShowDialog(GetMainWindow());
-            LoadData();
-        }
-
-        private void EditTest(Test test)
-        {
-            var editorViewModel = new TestEditorViewModel(_testService, test);
-            var editorWindow = new TestEditorWindow(editorViewModel);
-            editorWindow.ShowDialog(GetMainWindow());
-            LoadData();
+            var result = await _windowService.ShowTestEditorAsync(test);
+            if (result)
+            {
+                LoadData();
+            }
         }
 
         private void DeleteTest(Test test)
@@ -124,42 +119,42 @@ namespace AvaloniaTests.ViewModels
             LoadData();
         }
 
-        private void TakeTest(Test test)
+        private async System.Threading.Tasks.Task TakeTestAsync(Test test)
         {
-            var vmFactory = ServiceProvider.Instance.GetRequiredService<Func<Test, TestRunnerViewModel>>();
-            var runnerViewModel = vmFactory(test);
-            var runnerWindow = new TestRunnerWindow(runnerViewModel);
-            runnerWindow.ShowDialog(GetMainWindow());
-            LoadData();
+            var result = await _windowService.ShowTestRunnerAsync(test);
+            if (result)
+            {
+                LoadData();
+            }
         }
 
-        private void ViewResult(TestResult result)
+        private async System.Threading.Tasks.Task ViewResultAsync(TestResult result)
         {
             var test = _testService.GetTests().FirstOrDefault(t => t.Id == result.TestId);
-            var resultViewModel = new ResultViewModel(result, test);
-            var resultWindow = new ResultWindow(resultViewModel);
-            resultWindow.ShowDialog(GetMainWindow());
+            await _windowService.ShowResultViewerAsync(result, test);
         }
 
-        private void OpenStartTestWindow()
+        private async System.Threading.Tasks.Task OpenStartTestWindowAsync()
         {
-            var testListWindow = new TestListWindow(_testService, _resultService, true);
-            testListWindow.ShowDialog(GetMainWindow());
-            LoadData();
+            var result = await _windowService.ShowTestListAsync(true);
+            if (result)
+            {
+                LoadData();
+            }
         }
 
-        private void OpenTestList()
+        private async System.Threading.Tasks.Task OpenTestListAsync()
         {
-            var testListWindow = new TestListWindow(_testService);
-            testListWindow.ShowDialog(GetMainWindow());
-            LoadData();
+            var result = await _windowService.ShowTestListAsync(false);
+            if (result)
+            {
+                LoadData();
+            }
         }
 
-        private void OpenResultsTab()
+        private async System.Threading.Tasks.Task OpenResultsTabAsync()
         {
-            var resultsListViewModel = new ResultsListViewModel(_resultService, _testService, GetMainWindow());
-            var resultsListWindow = new ResultsListWindow(resultsListViewModel);
-            resultsListWindow.ShowDialog(GetMainWindow());
+            await _windowService.ShowResultsListAsync();
         }
     }
 }

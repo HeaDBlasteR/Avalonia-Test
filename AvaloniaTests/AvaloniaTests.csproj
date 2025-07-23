@@ -15,6 +15,7 @@
 	  <AvaloniaXaml Include="App.axaml">
 	    <SubType>Designer</SubType>
 	  </AvaloniaXaml>
+	  <AvaloniaXaml Include="Views\QuestionEditorWindow.axaml" />
 	  <AvaloniaXaml Include="Views\ResultsListWindow.axaml" />
 	  <AvaloniaXaml Include="Views\TestListWindow.axaml" />
 	  <AvaloniaXaml Include="Views\MainWindow.axaml" />

@@ -7,7 +7,7 @@
         Height="650"
         WindowStartupLocation="CenterOwner"
         Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
-        Title="Ебучие Результаты Тестов"
+        Title="Результаты Тестов"
         Background="#FFF5E6CC"
         Foreground="Black"
         FontFamily="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter">

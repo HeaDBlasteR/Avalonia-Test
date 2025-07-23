@@ -4,7 +4,7 @@
         WindowState="Maximized"
         WindowStartupLocation="CenterOwner"
 		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
-        Title="Ебучая Система Тестирования"
+        Title="Система Тестирования"
         x:Name="root">
 
     <Window.Background>

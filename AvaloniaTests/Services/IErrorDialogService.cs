@@ -43,7 +43,7 @@ namespace AvaloniaTests.Services
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
                 };
 
-                var titleText = new TextBlock
+                var titleText = new SelectableTextBlock
                 {
                     Text = "?? " + title,
                     FontSize = 18,
@@ -52,7 +52,7 @@ namespace AvaloniaTests.Services
                     HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
                 };
 
-                var messageText = new TextBlock
+                var messageText = new SelectableTextBlock
                 {
                     Text = message,
                     FontSize = 14,
@@ -93,6 +93,7 @@ namespace AvaloniaTests.Services
             }
             catch
             {
+                // В случае критической ошибки просто игнорируем
             }
         }
 

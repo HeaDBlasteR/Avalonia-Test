@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="AvaloniaTests.Views.TestListWindow"
-        Title="Ебучий Список Тестов"
+        Title="Список Тестов"
 		Icon="C:\Users\nozdr\source\repos\TestsAvaloniaMVVM\AvaloniaTests\Assets\Pudge.jpg"
 		Background="#FFF5E6CC"
         Foreground="Black"

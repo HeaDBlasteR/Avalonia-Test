@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using AvaloniaTests.Models;
 using AvaloniaTests.Services;
@@ -18,6 +17,7 @@ namespace AvaloniaTests.ViewModels
         private readonly Test _test;
         private readonly IResultService _resultService;
         private readonly IErrorDialogService _errorDialogService;
+        private readonly IDialogService _dialogService;
         private int _currentQuestionIndex;
         private Dictionary<Guid, Guid> _userAnswers = new();
         private Guid? _selectedAnswer;
@@ -51,6 +51,7 @@ namespace AvaloniaTests.ViewModels
             _test = test;
             _resultService = resultService;
             _errorDialogService = ServiceProvider.Instance.GetRequiredService<IErrorDialogService>();
+            _dialogService = ServiceProvider.Instance.GetRequiredService<IDialogService>();
             _currentQuestionIndex = 0;
 
             _test.FixCollections();
@@ -59,7 +60,7 @@ namespace AvaloniaTests.ViewModels
 
             NextQuestionCommand = ReactiveCommand.Create(NextQuestion);
             PreviousQuestionCommand = ReactiveCommand.Create(PreviousQuestion);
-            FinishTestCommand = ReactiveCommand.Create(FinishTest);
+            FinishTestCommand = ReactiveCommand.CreateFromTask(FinishTestAsync);
             SelectAnswerCommand = ReactiveCommand.Create<Guid>(SelectAnswer);
 
             SubscribeToCommandErrors(NextQuestionCommand);
@@ -113,7 +114,7 @@ namespace AvaloniaTests.ViewModels
             }
         }
 
-        private void FinishTest()
+        private async System.Threading.Tasks.Task FinishTestAsync()
         {
             var result = new TestResult
             {
@@ -129,80 +130,29 @@ namespace AvaloniaTests.ViewModels
 
             _resultService.SaveResult(result);
 
-            var mainWindow = (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime).MainWindow;
-            
-            var dialog = new Window
-            {
-                Title = "Результат теста",
-                Width = 300,
-                Height = 200,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F5F5DC")),
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black),
-                CanResize = false
-            };
-
-            var stackPanel = new StackPanel
-            {
-                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Spacing = 15
-            };
-
-            var titleText = new TextBlock
-            {
-                Text = "🎯 Тест завершен!",
-                FontSize = 18,
-                FontWeight = Avalonia.Media.FontWeight.Bold,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black)
-            };
-
-            var scoreText = new TextBlock
-            {
-                Text = $"Ваш результат: {result.Score} из {result.MaxScore}",
-                FontSize = 16,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black)
-            };
-
-            var percentageText = new TextBlock
-            {
-                Text = $"Процент: {(result.MaxScore > 0 ? (int)((double)result.Score / result.MaxScore * 100) : 0)}%",
-                FontSize = 14,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Black)
-            };
-
-            var okButton = new Button
-            {
-                Content = "OK",
-                Width = 80,
-                Height = 30,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#FF4CAF50")),
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.White),
-                FontWeight = Avalonia.Media.FontWeight.SemiBold
-            };
-
-            okButton.Click += (_, __) => dialog.Close();
-
-            stackPanel.Children.Add(titleText);
-            stackPanel.Children.Add(scoreText);
-            stackPanel.Children.Add(percentageText);
-            stackPanel.Children.Add(okButton);
-
-            dialog.Content = stackPanel;
-            dialog.ShowDialog(mainWindow);
+            await _dialogService.ShowTestCompletionDialogAsync(result);
 
             CloseTestWindow();
         }
 
         private void CloseTestWindow()
         {
-            var windows = (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Windows;
-            var currentWindow = windows?.FirstOrDefault(w => w.DataContext == this);
-            currentWindow?.Close();
+            try
+            {
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
+                    
+                    if (currentWindow != null && currentWindow != desktop.MainWindow)
+                    {
+                        currentWindow.Close(true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка при закрытии окна теста: {ex.Message}");
+            }
         }
     }
 }

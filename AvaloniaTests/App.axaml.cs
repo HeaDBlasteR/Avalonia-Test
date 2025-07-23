@@ -14,7 +14,7 @@ namespace AvaloniaTests
     {
         public static IServiceProvider Instance { get; private set; } = null!;
 
-        //Регистрирует все необходимые сервисы и ViewModel
+        //Инициализация для внедрения зависимостей в ViewModel
         public static void Init()
         {
             var services = new ServiceCollection();
@@ -22,6 +22,9 @@ namespace AvaloniaTests
             services.AddSingleton<ITestService, JsonTestService>();
             services.AddSingleton<IResultService, JsonResultService>();
             services.AddSingleton<IErrorDialogService, ErrorDialogService>();
+            
+            services.AddSingleton<IWindowService, WindowService>();
+            services.AddSingleton<IDialogService, DialogService>();
 
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<TestEditorViewModel>();
@@ -34,8 +37,8 @@ namespace AvaloniaTests
             services.AddTransient<ResultWindow>();
 
             // Фабрика для создания TestRunnerViewModel с параметром Test
-            services.AddTransient<Func<Test, TestRunnerViewModel>>(sp =>
-                test => new TestRunnerViewModel(test, sp.GetRequiredService<IResultService>()));
+            services.AddTransient<Func<Test, IResultService, TestRunnerViewModel>>(sp =>
+                (test, resultService) => new TestRunnerViewModel(test, resultService));
 
             // Фабрика для создания ResultViewModel с параметрами TestResult и Test
             services.AddTransient<Func<TestResult, Test, ResultViewModel>>(sp =>
@@ -60,12 +63,15 @@ namespace AvaloniaTests
             base.Initialize();
         }
 
-        // Вызывается после завершения инициализации фреймворка, устанавливает главное окно
+        // Запускается после завершения инициализации приложения, устанавливает главное окно
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = ServiceProvider.Instance.GetRequiredService<MainWindow>();
+                
+                // Устанавливаем режим завершения приложения при закрытии главного окна
+                desktop.ShutdownMode = Avalonia.Controls.ShutdownMode.OnMainWindowClose;
             }
             base.OnFrameworkInitializationCompleted();
         }

@@ -10,7 +10,7 @@ namespace AvaloniaTests
         //Запуск
         [STAThread]
         public static void Main(string[] args) => BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+            .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
 
         // Создание
         public static AppBuilder BuildAvaloniaApp()

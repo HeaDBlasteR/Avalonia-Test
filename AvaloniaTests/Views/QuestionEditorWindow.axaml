@@ -1,0 +1,139 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaTests.ViewModels"
+        xmlns:models="using:AvaloniaTests.Models"
+        xmlns:converters="using:AvaloniaTests.Converters"
+        x:Class="AvaloniaTests.Views.QuestionEditorWindow"
+        Title="{Binding WindowTitle}"
+        Width="800"
+        Height="650"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#F5F5DC">
+
+    <Window.Resources>
+        <converters:IsSelectedConverter x:Key="IsSelectedConverter"/>
+    </Window.Resources>
+
+    <Border Background="White"
+            CornerRadius="15"
+            Padding="30"
+            Margin="20"
+            BorderThickness="1"
+            BorderBrush="#E0E0E0">
+        
+        <StackPanel Spacing="20">
+            
+            <StackPanel Spacing="10">
+                <TextBlock Text="Текст вопроса:"
+                          FontWeight="SemiBold"
+                          FontSize="16"
+                          Foreground="#2C3E50"/>
+                
+                <TextBox Text="{Binding EditingQuestion.Text}"
+                        Watermark="Введите текст вопроса..."
+                        Height="80"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap"
+                        CornerRadius="8"
+                        Padding="15"
+                        BorderThickness="2"
+                        BorderBrush="#BDC3C7"/>
+            </StackPanel>
+
+            <StackPanel Spacing="10">
+                <TextBlock Text="Варианты ответов:"
+                          FontWeight="SemiBold"
+                          FontSize="16"
+                          Foreground="#2C3E50"/>
+                
+                <ScrollViewer Height="200"
+                             VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding EditingQuestion.Answers}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:Answer">
+                                <Border Background="White"
+                                       CornerRadius="8"
+                                       Padding="15"
+                                       Margin="0,5"
+                                       BorderThickness="1"
+                                       BorderBrush="#E0E0E0">
+                                    
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        
+                                        <RadioButton GroupName="CorrectAnswer"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding $parent[Window].DataContext.SetCorrectAnswerCommand}"
+                                                    CommandParameter="{Binding}">
+                                            <RadioButton.IsChecked>
+                                                <MultiBinding Converter="{StaticResource IsSelectedConverter}">
+                                                    <Binding Path="Id"/>
+                                                    <Binding Path="$parent[Window].DataContext.EditingQuestion.CorrectAnswerId"/>
+                                                </MultiBinding>
+                                            </RadioButton.IsChecked>
+                                        </RadioButton>
+                                        
+                                        <TextBox Text="{Binding Text}"
+                                                Width="300"
+                                                Watermark="Вариант ответа..."
+                                                CornerRadius="6"
+                                                Padding="10"
+                                                BorderThickness="2"
+                                                BorderBrush="#BDC3C7"/>
+                                        
+                                        <Button Content="✕"
+                                               IsEnabled="{Binding $parent[Window].DataContext.CanRemoveAnswers}"
+                                               Width="35"
+                                               Height="35"
+                                               CornerRadius="6"
+                                               Background="#E74C3C"
+                                               Foreground="White"
+                                               FontSize="14"
+                                               VerticalAlignment="Center"
+                                               Command="{Binding $parent[Window].DataContext.RemoveAnswerCommand}"
+                                               CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                
+                <Button Content="➕ Добавить вариант"
+                       Padding="15,8"
+                       CornerRadius="8"
+                       Background="#3498DB"
+                       Foreground="White"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center"
+                       Margin="0,10"
+                       Command="{Binding AddAnswerCommand}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                       HorizontalAlignment="Right"
+                       Spacing="15"
+                       Margin="0,20,0,0">
+                
+                <Button Content="Отмена"
+                       IsCancel="True"
+                       Padding="20,10"
+                       CornerRadius="8"
+                       Background="#95A5A6"
+                       Foreground="White"
+                       FontWeight="SemiBold"
+                       Command="{Binding CancelCommand}"/>
+                
+                <Button Content="💾 Сохранить"
+                       IsDefault="True"
+                       Padding="20,10"
+                       CornerRadius="8"
+                       Background="#27AE60"
+                       Foreground="White"
+                       FontWeight="SemiBold"
+                       Command="{Binding SaveCommand}"/>
+            </StackPanel>
+            
+        </StackPanel>
+    </Border>
+</Window>
