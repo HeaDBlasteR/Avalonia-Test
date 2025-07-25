@@ -4,9 +4,9 @@ using AvaloniaTests.ViewModels;
 
 namespace AvaloniaTests.Views
 {
-    public partial class ResultsListWindow : Window
+    public partial class ErrorDialogWindow : Window
     {
-        public ResultsListWindow(ResultsListViewModel viewModel)
+        public ErrorDialogWindow(ErrorDialogViewModel viewModel)
         {
             InitializeComponent();
             DataContext = viewModel;

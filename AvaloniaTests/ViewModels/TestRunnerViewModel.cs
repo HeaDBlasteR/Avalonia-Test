@@ -1,5 +1,3 @@
-п»їusing Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using AvaloniaTests.Models;
 using AvaloniaTests.Services;
 using ReactiveUI;
@@ -7,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -16,33 +13,42 @@ namespace AvaloniaTests.ViewModels
         private readonly Test _test;
         private readonly IResultService _resultService;
         private readonly IDialogService _dialogService;
+        private readonly string _currentUserName;
         private int _currentQuestionIndex;
         private Dictionary<Guid, Guid> _userAnswers = new();
         private Guid? _selectedAnswer;
 
-        //РўРµРєСѓС‰РёР№ РІРѕРїСЂРѕСЃ
+        //Текущий вопрос
         public Question CurrentQuestion => _test.Questions[_currentQuestionIndex];
         public string TestTitle => _test.Title;
         public int QuestionNumber => _currentQuestionIndex + 1;
         public int TotalQuestions => _test.Questions.Count;
 
-        // ID РІС‹Р±СЂР°РЅРЅРѕРіРѕ РѕС‚РІРµС‚Р°
+        // ID выбранного ответа
         public Guid? SelectedAnswer
         {
             get => _selectedAnswer;
             set => this.RaiseAndSetIfChanged(ref _selectedAnswer, value);
         }
 
+        // Свойства для управления видимостью и доступностью кнопок навигации
+        public bool CanGoNext => _currentQuestionIndex < _test.Questions.Count - 1;
+        public bool CanGoPrevious => _currentQuestionIndex > 0;
+        public bool HasMultipleQuestions => _test.Questions.Count > 1;
+
         public ICommand NextQuestionCommand { get; private set; }
         public ICommand PreviousQuestionCommand { get; private set; }
         public ICommand FinishTestCommand { get; private set; }
         public ICommand SelectAnswerCommand { get; private set; }
 
-        public TestRunnerViewModel(Test test, IResultService resultService)
+        public event EventHandler<bool>? CloseRequested;
+
+        public TestRunnerViewModel(Test test, IResultService resultService, IDialogService dialogService, string currentUserName = "Пользователь")
         {
             _test = test;
             _resultService = resultService;
-            _dialogService = ServiceProvider.Instance.GetRequiredService<IDialogService>();
+            _dialogService = dialogService;
+            _currentUserName = currentUserName;
             _currentQuestionIndex = 0;
 
             _test.FixCollections();
@@ -54,8 +60,8 @@ namespace AvaloniaTests.ViewModels
 
         private void InitializeCommands()
         {
-            NextQuestionCommand = ReactiveCommand.Create(NextQuestion);
-            PreviousQuestionCommand = ReactiveCommand.Create(PreviousQuestion);
+            NextQuestionCommand = ReactiveCommand.Create(NextQuestion, this.WhenAnyValue(x => x.CanGoNext));
+            PreviousQuestionCommand = ReactiveCommand.Create(PreviousQuestion, this.WhenAnyValue(x => x.CanGoPrevious));
             FinishTestCommand = ReactiveCommand.CreateFromTask(FinishTestAsync);
             SelectAnswerCommand = ReactiveCommand.Create<Guid>(SelectAnswer);
         }
@@ -68,17 +74,29 @@ namespace AvaloniaTests.ViewModels
 
         private void NextQuestion()
         {
-            _currentQuestionIndex++;
-            this.RaisePropertyChanged(nameof(CurrentQuestion));
-            this.RaisePropertyChanged(nameof(QuestionNumber));
-            SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
+            if (_currentQuestionIndex < _test.Questions.Count - 1)
+            {
+                _currentQuestionIndex++;
+                UpdateCurrentQuestionProperties();
+            }
         }
 
         private void PreviousQuestion()
         {
-            _currentQuestionIndex--;
+            if (_currentQuestionIndex > 0)
+            {
+                _currentQuestionIndex--;
+                UpdateCurrentQuestionProperties();
+            }
+        }
+
+        private void UpdateCurrentQuestionProperties()
+        {
             this.RaisePropertyChanged(nameof(CurrentQuestion));
             this.RaisePropertyChanged(nameof(QuestionNumber));
+            this.RaisePropertyChanged(nameof(CanGoNext));
+            this.RaisePropertyChanged(nameof(CanGoPrevious));
+            
             SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
         }
 
@@ -87,7 +105,7 @@ namespace AvaloniaTests.ViewModels
             var result = new TestResult
             {
                 TestId = _test.Id,
-                UserName = Environment.UserName,
+                UserName = _currentUserName,
                 CompletionDate = DateTime.Now,
                 MaxScore = _test.Questions.Count,
                 UserAnswers = _userAnswers
@@ -100,20 +118,12 @@ namespace AvaloniaTests.ViewModels
 
             await _dialogService.ShowTestCompletionDialogAsync(result);
 
-            CloseTestWindow();
+            RequestClose(true);
         }
 
-        private void CloseTestWindow()
+        private void RequestClose(bool result)
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
-                
-                if (currentWindow != null && currentWindow != desktop.MainWindow)
-                {
-                    currentWindow.Close(true);
-                }
-            }
+            CloseRequested?.Invoke(this, result);
         }
     }
 }

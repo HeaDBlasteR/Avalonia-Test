@@ -14,7 +14,7 @@ namespace AvaloniaTests
     {
         public static IServiceProvider Instance { get; private set; } = null!;
 
-        //»нициализаци€ дл€ внедрени€ зависимостей в ViewModel
+        //инициализаци€ дл€ создани€ экземпл€ров зависимостей в ViewModel
         public static void Init()
         {
             var services = new ServiceCollection();
@@ -27,28 +27,34 @@ namespace AvaloniaTests
             services.AddSingleton<IDialogService, DialogService>();
 
             services.AddTransient<MainWindowViewModel>();
-            services.AddTransient<TestEditorViewModel>();
-            services.AddTransient<TestRunnerViewModel>();
-            services.AddTransient<ResultViewModel>();
 
             services.AddTransient<MainWindow>();
             services.AddTransient<TestEditorWindow>();
             services.AddTransient<TestRunnerWindow>();
             services.AddTransient<ResultWindow>();
 
-            // ‘абрика дл€ создани€ TestRunnerViewModel с параметром Test
-            services.AddTransient<Func<Test, IResultService, TestRunnerViewModel>>(sp =>
-                (test, resultService) => new TestRunnerViewModel(test, resultService));
+            services.AddTransient<Func<Test?, TestEditorViewModel>>(sp =>
+            {
+                var testService = sp.GetRequiredService<ITestService>();
+                var dialogService = sp.GetRequiredService<IDialogService>();
+                return (test) => new TestEditorViewModel(testService, dialogService, test);
+            });
 
-            // ‘абрика дл€ создани€ ResultViewModel с параметрами TestResult и Test
-            services.AddTransient<Func<TestResult, Test, ResultViewModel>>(sp =>
+            services.AddTransient<Func<Test, TestRunnerViewModel>>(sp =>
+            {
+                var resultService = sp.GetRequiredService<IResultService>();
+                var dialogService = sp.GetRequiredService<IDialogService>();
+                return (test) => new TestRunnerViewModel(test, resultService, dialogService, Environment.UserName ?? "ѕользователь");
+            });
+
+            services.AddTransient<Func<TestResult, Test?, ResultViewModel>>(sp =>
                 (result, test) => new ResultViewModel(result, test));
 
             Instance = services.BuildServiceProvider();
         }
     }
 
-    //»нициализаци€ и запуск приложени€
+    //инициализаци€ в начале приложени€
     public class App : Application
     {
         public App()
@@ -56,21 +62,21 @@ namespace AvaloniaTests
             ServiceProvider.Init();
         }
 
-        //»нициализаци€ XAML
+        //инициализаци€ XAML
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
             base.Initialize();
         }
 
-        // «апускаетс€ после завершени€ инициализации приложени€, устанавливает главное окно
+        // вызываетс€ после полной инициализации приложени€, устанавливает главное окно
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = ServiceProvider.Instance.GetRequiredService<MainWindow>();
                 
-                // ”станавливаем режим завершени€ приложени€ при закрытии главного окна
+                // установка режима завершени€ приложени€ при закрытии главного окна
                 desktop.ShutdownMode = Avalonia.Controls.ShutdownMode.OnMainWindowClose;
             }
             base.OnFrameworkInitializationCompleted();

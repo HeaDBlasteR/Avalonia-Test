@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AvaloniaTests.Views.ConfirmationDialogWindow"
+        Title="{Binding Title}"
+        Width="400"
+        Height="200"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#F5F5DC">
+    
+    <StackPanel Margin="30" Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="{Binding Title}" 
+                   FontSize="18" 
+                   FontWeight="Bold" 
+                   Foreground="#2C3E50"
+                   HorizontalAlignment="Center"/>
+        
+        <TextBlock Text="{Binding Message}" 
+                   FontSize="14" 
+                   Foreground="#424242"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap"/>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15">
+            <Button Command="{Binding YesCommand}"
+                    Content="Да"
+                    Width="80"
+                    Height="35"
+                    Background="#27AE60"
+                    Foreground="White"
+                    FontWeight="SemiBold"
+                    CornerRadius="8"/>
+            
+            <Button Command="{Binding NoCommand}"
+                    Content="Нет"
+                    Width="80"
+                    Height="35"
+                    Background="#E74C3C"
+                    Foreground="White"
+                    FontWeight="SemiBold"
+                    CornerRadius="8"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -15,8 +15,11 @@
 	  <AvaloniaXaml Include="App.axaml">
 	    <SubType>Designer</SubType>
 	  </AvaloniaXaml>
+	  <AvaloniaXaml Include="Views\ConfirmationDialogWindow.axaml" />
+	  <AvaloniaXaml Include="Views\ErrorDialogWindow.axaml" />
 	  <AvaloniaXaml Include="Views\QuestionEditorWindow.axaml" />
 	  <AvaloniaXaml Include="Views\ResultsListWindow.axaml" />
+	  <AvaloniaXaml Include="Views\TestCompletionDialogWindow.axaml" />
 	  <AvaloniaXaml Include="Views\TestListWindow.axaml" />
 	  <AvaloniaXaml Include="Views\MainWindow.axaml" />
 	  <AvaloniaXaml Include="Views\ResultWindow.axaml" />

@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AvaloniaTests.Views.TestCompletionDialogWindow"
+        Title="Тест завершен"
+        Width="400"
+        Height="250"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#F5F5DC">
+    
+    <StackPanel Margin="30" Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="{Binding TestCompletedMessage}" 
+                   FontSize="18" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center"
+                   Foreground="Black"/>
+        
+        <TextBlock Text="{Binding ScoreMessage}" 
+                   FontSize="16" 
+                   HorizontalAlignment="Center"
+                   Foreground="Black"/>
+        
+        <TextBlock Text="{Binding PercentageMessage}" 
+                   FontSize="14" 
+                   HorizontalAlignment="Center"
+                   Foreground="Black"/>
+        
+        <Button Command="{Binding OkCommand}"
+                Content="OK"
+                Width="80"
+                Height="30"
+                HorizontalAlignment="Center"
+                Background="#FF4CAF50"
+                Foreground="White"
+                FontWeight="SemiBold"/>
+    </StackPanel>
+</Window>

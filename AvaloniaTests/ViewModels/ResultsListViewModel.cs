@@ -30,14 +30,13 @@ namespace AvaloniaTests.ViewModels
         public ICommand CloseCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
 
-        // Событие для запроса закрытия окна
         public event EventHandler? CloseRequested;
 
-        public ResultsListViewModel(IResultService resultService, ITestService testService)
+        public ResultsListViewModel(IResultService resultService, ITestService testService, IWindowService windowService)
         {
             _resultService = resultService;
             _testService = testService;
-            _windowService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IWindowService>(ServiceProvider.Instance);
+            _windowService = windowService;
 
             InitializeCommands();
 

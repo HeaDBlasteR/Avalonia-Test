@@ -1,6 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using AvaloniaTests.Models;
+﻿using AvaloniaTests.Models;
 using AvaloniaTests.Services;
 using ReactiveUI;
 using System;
@@ -30,10 +28,12 @@ namespace AvaloniaTests.ViewModels
         public ICommand EditQuestionCommand { get; private set; }
         public ICommand SetCorrectAnswerCommand { get; private set; }
 
-        public TestEditorViewModel(ITestService testService, Test? testToEdit = null)
+        public event EventHandler<bool>? CloseRequested;
+
+        public TestEditorViewModel(ITestService testService, IDialogService dialogService, Test? testToEdit = null)
         {
             _testService = testService;
-            _dialogService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IDialogService>(ServiceProvider.Instance);
+            _dialogService = dialogService;
             EditingTest = testToEdit ?? new Test("", "");
 
             InitializeCommands();
@@ -70,20 +70,12 @@ namespace AvaloniaTests.ViewModels
             }
 
             _testService.SaveTest(EditingTest);
-            CloseTestEditorWindow();
+            RequestClose(true);
         }
 
-        private void CloseTestEditorWindow()
+        private void RequestClose(bool result)
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
-                
-                if (currentWindow != null && currentWindow != desktop.MainWindow)
-                {
-                    currentWindow.Close(true);
-                }
-            }
+            CloseRequested?.Invoke(this, result);
         }
 
         private async Task AddQuestionAsync()

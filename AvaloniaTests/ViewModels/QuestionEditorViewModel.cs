@@ -33,6 +33,8 @@ namespace AvaloniaTests.ViewModels
         public ICommand RemoveAnswerCommand { get; private set; }
         public ICommand SetCorrectAnswerCommand { get; private set; }
 
+        public event EventHandler<bool>? CloseRequested;
+
         public QuestionEditorViewModel(Question? question = null)
         {
             IsEditMode = question != null;
@@ -97,12 +99,17 @@ namespace AvaloniaTests.ViewModels
 
             EditingQuestion.AnswersData = EditingQuestion.Answers.ToList();
 
-            CloseWithResult(true);
+            RequestClose(true);
         }
 
         private void Cancel()
         {
-            CloseWithResult(false);
+            RequestClose(false);
+        }
+
+        private void RequestClose(bool result)
+        {
+            CloseRequested?.Invoke(this, result);
         }
 
         private void AddAnswer()
@@ -127,20 +134,6 @@ namespace AvaloniaTests.ViewModels
         private void SetCorrectAnswer(Answer answer)
         {
             EditingQuestion.CorrectAnswerId = answer.Id;
-        }
-
-        private void CloseWithResult(bool result)
-        {
-            if (Avalonia.Application.Current?.ApplicationLifetime is 
-                Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var currentWindow = desktop.Windows.FirstOrDefault(w => w.DataContext == this);
-                
-                if (currentWindow != null && currentWindow != desktop.MainWindow)
-                {
-                    currentWindow.Close(result);
-                }
-            }
         }
     }
 }

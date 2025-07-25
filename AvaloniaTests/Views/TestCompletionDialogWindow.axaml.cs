@@ -4,9 +4,9 @@ using AvaloniaTests.ViewModels;
 
 namespace AvaloniaTests.Views
 {
-    public partial class ResultsListWindow : Window
+    public partial class TestCompletionDialogWindow : Window
     {
-        public ResultsListWindow(ResultsListViewModel viewModel)
+        public TestCompletionDialogWindow(TestCompletionDialogViewModel viewModel)
         {
             InitializeComponent();
             DataContext = viewModel;

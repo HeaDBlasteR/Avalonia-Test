@@ -4,14 +4,14 @@ using AvaloniaTests.ViewModels;
 
 namespace AvaloniaTests.Views
 {
-    public partial class ResultsListWindow : Window
+    public partial class ConfirmationDialogWindow : Window
     {
-        public ResultsListWindow(ResultsListViewModel viewModel)
+        public ConfirmationDialogWindow(ConfirmationDialogViewModel viewModel)
         {
             InitializeComponent();
             DataContext = viewModel;
             
-            viewModel.CloseRequested += (sender, e) => Close();
+            viewModel.CloseRequested += (sender, result) => Close(result);
         }
 
         private void InitializeComponent()
