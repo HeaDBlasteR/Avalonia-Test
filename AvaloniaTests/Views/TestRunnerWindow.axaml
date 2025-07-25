@@ -54,9 +54,18 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-            <Button Content="Назад" Command="{Binding PreviousQuestionCommand}" Foreground="Black"/>
-            <Button Content="Вперед" Command="{Binding NextQuestionCommand}" Foreground="Black"/>
-            <Button Content="Завершить" Command="{Binding FinishTestCommand}" Foreground="Black"/>
+            <Button Content="Назад" 
+					Command="{Binding PreviousQuestionCommand}" 
+					Classes="HighlightedButton" 
+					Foreground="Black"/>
+            <Button Content="Вперед" 
+					Command="{Binding NextQuestionCommand}" 
+					Classes="HighlightedButton" 
+					Foreground="Black"/>
+            <Button Content="Завершить" 
+					Command="{Binding FinishTestCommand}" 
+					Classes="HighlightedButton" 
+					Foreground="Black"/>
         </StackPanel>
     </Grid>
 </Window>

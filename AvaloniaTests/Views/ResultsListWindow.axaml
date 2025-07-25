@@ -122,7 +122,8 @@
                                                     VerticalAlignment="Center">
                                             <Button Content="Подробно" 
                                                     Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).ViewResultCommand}"
-                                                    CommandParameter="{Binding}"
+													CommandParameter="{Binding}"
+													Classes="HighlightedButton"
                                                     Background="#FF4CAF50"
                                                     Foreground="White"
                                                     Padding="12,6"
@@ -133,7 +134,8 @@
                                             <Button Content="Удалить" 
                                                     Command="{Binding $parent[ItemsControl].((vm:ResultsListViewModel)DataContext).DeleteResultCommand}"
                                                     CommandParameter="{Binding}"
-                                                    Background="#FFF44336"
+                                                    Classes="HighlightedButton"
+													Background="#FFF44336"
                                                     Foreground="White"
                                                     Padding="12,6"
                                                     FontSize="12"
@@ -174,6 +176,7 @@
             
             <Button Content="🔄 Обновить" 
                     Command="{Binding RefreshCommand}"
+					Classes="HighlightedButton"
                     Background="#FF2196F3"
                     Foreground="White"
                     Padding="20,12"
@@ -184,6 +187,7 @@
             
             <Button Content="✖️ Закрыть" 
                     Command="{Binding CloseCommand}"
+					Classes="HighlightedButton"
                     Background="#FF757575"
                     Foreground="White"
                     Padding="20,12"

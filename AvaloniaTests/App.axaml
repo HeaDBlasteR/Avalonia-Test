@@ -28,6 +28,45 @@
 			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
 		</Style>
 		
+		<Style Selector="Button.HighlightedButton">
+			<Setter Property="Transitions">
+				<Transitions>
+					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+				</Transitions>
+			</Setter>
+			<Setter Property="RenderTransform" Value="scale(1.0)" />
+		</Style>
+		
+		<Style Selector="Button.HighlightedButton:pointerover">
+			<Setter Property="RenderTransform" Value="scale(1.05)" />
+		</Style>
+		
+		<Style Selector="Button.HighlightedButton:pressed">
+			<Setter Property="RenderTransform" Value="scale(0.98)" />
+		</Style>
+		
+		<Style Selector="Button.HighlightedButton:disabled">
+			<Setter Property="Opacity" Value="0.6" />
+			<Setter Property="BorderThickness" Value="0" />
+		</Style>
+		
+		<Style Selector="Button.HighlightedButton /template/ ContentPresenter">
+			<Setter Property="Opacity" Value="1.0" />
+		</Style>
+		
+		<Style Selector="Button.HighlightedButton:pointerover /template/ ContentPresenter">
+			<Setter Property="Opacity" Value="1.0" />
+		</Style>
+		
+		<Style Selector="Button.HighlightedButton:pressed /template/ ContentPresenter">
+			<Setter Property="Opacity" Value="1.0" />
+		</Style>
+		
+		<Style Selector="Button.HighlightedButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="{TemplateBinding Background}" />
+			<Setter Property="Opacity" Value="1.0" />
+		</Style>
+		
 		<Style Selector="DataGrid">
 			<Setter Property="FontFamily" Value="Segoe UI,avares://Avalonia.Fonts.Inter/Assets#Inter" />
 		</Style>

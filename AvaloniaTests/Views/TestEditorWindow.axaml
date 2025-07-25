@@ -222,7 +222,8 @@
                 </ScrollViewer>
 
                 <Button Grid.Row="2" 
-                        Command="{Binding AddQuestionCommand}" 
+                        Command="{Binding AddQuestionCommand}"
+						Classes="HighlightedButton"
                         HorizontalAlignment="Center"
                         Margin="0,20,0,0"
                         Padding="20,12"
@@ -253,6 +254,7 @@
                 <Button Content="Отмена" 
                         Padding="20,12"
                         CornerRadius="8"
+						Classes="HighlightedButton"
                         Background="#95A5A6"
                         Foreground="White"
                         BorderThickness="0"
@@ -260,7 +262,8 @@
                         FontSize="14"
                         Click="CancelButton_Click"/>
                 
-                <Button Command="{Binding SaveCommand}" 
+                <Button Command="{Binding SaveCommand}"
+						Classes="HighlightedButton"
                         Padding="25,12"
                         CornerRadius="8"
                         Background="#2ECC71"

@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="AvaloniaTests.Views.TestCompletionDialogWindow"
-        Title="Òåñò çàâåðøåí"
+        Title="Ð¢ÐµÑÑ‚ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½"
         Width="400"
         Height="250"
         WindowStartupLocation="CenterOwner"
@@ -26,6 +26,7 @@
                    Foreground="Black"/>
         
         <Button Command="{Binding OkCommand}"
+				Classes="HighlightedButton"
                 Content="OK"
                 Width="80"
                 Height="30"

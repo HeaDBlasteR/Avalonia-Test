@@ -27,6 +27,12 @@ namespace AvaloniaTests.ViewModels
 
         public bool CanRemoveAnswers => EditingQuestion?.Answers?.Count > 2;
 
+        // Свойство для валидации
+        public bool CanSaveQuestion => !string.IsNullOrWhiteSpace(EditingQuestion?.Text) &&
+                                      EditingQuestion.Answers.Count >= 2 &&
+                                      EditingQuestion.Answers.All(a => !string.IsNullOrWhiteSpace(a.Text)) &&
+                                      EditingQuestion.CorrectAnswerId != Guid.Empty;
+
         public ICommand SaveCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
         public ICommand AddAnswerCommand { get; private set; }
@@ -41,11 +47,16 @@ namespace AvaloniaTests.ViewModels
             EditingQuestion = question != null ? CreateCopyOfQuestion(question) : CreateNewQuestion();
 
             InitializeCommands();
+            SetupValidation();
+        }
 
-            EditingQuestion.Answers.CollectionChanged += (s, e) => 
-            {
-                this.RaisePropertyChanged(nameof(CanRemoveAnswers));
-            };
+        //Подписываемся на валидацию
+        private void SetupValidation()
+        {
+            this.WhenAnyValue(x => x.EditingQuestion.Text, x => x.EditingQuestion.CorrectAnswerId)
+                .Subscribe(_ => UpdateValidationProperties());
+
+            EditingQuestion.Answers.CollectionChanged += (s, e) => UpdateValidationProperties();
 
             this.WhenAnyValue(x => x.IsEditMode)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(WindowTitle)));
@@ -53,10 +64,13 @@ namespace AvaloniaTests.ViewModels
 
         private void InitializeCommands()
         {
-            SaveCommand = ReactiveCommand.Create(Save);
+            // SaveCommand зависит от валидации - кнопка автоматически неактивна при нарушении условий
+            SaveCommand = ReactiveCommand.Create(Save, this.WhenAnyValue(x => x.CanSaveQuestion));
+            
             CancelCommand = ReactiveCommand.Create(Cancel);
             AddAnswerCommand = ReactiveCommand.Create(AddAnswer);
-            RemoveAnswerCommand = ReactiveCommand.Create<Answer>(RemoveAnswer);
+            RemoveAnswerCommand = ReactiveCommand.Create<Answer>(RemoveAnswer, 
+                this.WhenAnyValue(x => x.CanRemoveAnswers));
             SetCorrectAnswerCommand = ReactiveCommand.Create<Answer>(SetCorrectAnswer);
         }
 
@@ -65,7 +79,7 @@ namespace AvaloniaTests.ViewModels
             var question = new Question("");
             question.Answers.Add(new Answer(""));
             question.Answers.Add(new Answer(""));
-            question.CorrectAnswerId = question.Answers[0].Id;
+            question.CorrectAnswerId = Guid.Empty; // Не выбираем правильный ответ по умолчанию
             return question;
         }
 
@@ -88,6 +102,12 @@ namespace AvaloniaTests.ViewModels
 
         private void Save()
         {
+            //Доп проверка
+            if (!CanSaveQuestion)
+            {
+                return;
+            }
+
             if (EditingQuestion.Id == Guid.Empty)
                 EditingQuestion.Id = Guid.NewGuid();
 
@@ -115,8 +135,7 @@ namespace AvaloniaTests.ViewModels
         private void AddAnswer()
         {
             EditingQuestion.Answers.Add(new Answer(""));
-
-            this.RaisePropertyChanged(nameof(CanRemoveAnswers));
+            UpdateValidationProperties();
         }
 
         private void RemoveAnswer(Answer answer)
@@ -125,15 +144,22 @@ namespace AvaloniaTests.ViewModels
             
             if (EditingQuestion.CorrectAnswerId == answer.Id)
             {
-                EditingQuestion.CorrectAnswerId = EditingQuestion.Answers.FirstOrDefault()?.Id ?? Guid.Empty;
+                EditingQuestion.CorrectAnswerId = Guid.Empty;
             }
             
-            this.RaisePropertyChanged(nameof(CanRemoveAnswers));
+            UpdateValidationProperties();
         }
 
         private void SetCorrectAnswer(Answer answer)
         {
             EditingQuestion.CorrectAnswerId = answer.Id;
+            UpdateValidationProperties();
+        }
+
+        private void UpdateValidationProperties()
+        {
+            this.RaisePropertyChanged(nameof(CanRemoveAnswers));
+            this.RaisePropertyChanged(nameof(CanSaveQuestion));
         }
     }
 }

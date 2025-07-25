@@ -21,8 +21,14 @@
         
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" 
                     Margin="10" Spacing="10">
-            <Button Content="Обновить" Command="{Binding RefreshCommand}" Foreground="Black"/>
-            <Button Content="Закрыть" Command="{Binding CloseCommand}" Foreground="Black"/>
+            <Button Content="Обновить"
+					Command="{Binding RefreshCommand}"
+					Classes="HighlightedButton"
+					Foreground="Black"/>
+            <Button Content="Закрыть"
+					Command="{Binding CloseCommand}"
+					Classes="HighlightedButton"
+					Foreground="Black"/>
         </StackPanel>
         
         <ScrollViewer Margin="10">
@@ -39,16 +45,19 @@
                                                FontSize="12" Foreground="Blue" Margin="0,0,0,10"/>
                                     
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <Button Content="Редактировать" 
-                                                Command="{Binding $parent[Window].DataContext.EditTestCommand}" 
+                                        <Button Content="Редактировать"
+                                                Command="{Binding $parent[Window].DataContext.EditTestCommand}"
+												Classes="HighlightedButton"
                                                 CommandParameter="{Binding}"
                                                 Foreground="Black" Background="LightBlue" Padding="5"/>
                                         <Button Content="Удалить" 
-                                                Command="{Binding $parent[Window].DataContext.DeleteTestCommand}" 
+                                                Command="{Binding $parent[Window].DataContext.DeleteTestCommand}"
+												Classes="HighlightedButton"
                                                 CommandParameter="{Binding}"
                                                 Foreground="Black" Background="LightCoral" Padding="5"/>
                                         <Button Content="Пройти тест" 
-                                                Command="{Binding $parent[Window].DataContext.SelectTestCommand}" 
+                                                Command="{Binding $parent[Window].DataContext.SelectTestCommand}"
+												Classes="HighlightedButton"
                                                 CommandParameter="{Binding}"
                                                 Foreground="Black" Background="LightGreen" Padding="5"
                                                 IsVisible="{Binding $parent[Window].DataContext.IsSelectMode}"/>

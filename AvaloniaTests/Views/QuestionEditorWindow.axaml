@@ -84,6 +84,7 @@
                                         
                                         <Button Content="✕"
                                                IsEnabled="{Binding $parent[Window].DataContext.CanRemoveAnswers}"
+											   Classes="HighlightedButton"
                                                Width="35"
                                                Height="35"
                                                CornerRadius="6"
@@ -101,6 +102,7 @@
                 </ScrollViewer>
                 
                 <Button Content="➕ Добавить вариант"
+					   Classes="HighlightedButton"
                        Padding="15,8"
                        CornerRadius="8"
                        Background="#3498DB"
@@ -123,7 +125,8 @@
                        Background="#95A5A6"
                        Foreground="White"
                        FontWeight="SemiBold"
-                       Command="{Binding CancelCommand}"/>
+                       Command="{Binding CancelCommand}"
+					   Classes="HighlightedButton"/>
                 
                 <Button Content="💾 Сохранить"
                        IsDefault="True"
@@ -132,9 +135,9 @@
                        Background="#27AE60"
                        Foreground="White"
                        FontWeight="SemiBold"
-                       Command="{Binding SaveCommand}"/>
+                       Command="{Binding SaveCommand}"
+					   Classes="HighlightedButton"/>
             </StackPanel>
-            
         </StackPanel>
     </Border>
 </Window>

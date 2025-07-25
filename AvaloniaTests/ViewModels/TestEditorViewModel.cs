@@ -20,6 +20,10 @@ namespace AvaloniaTests.ViewModels
             set => this.RaiseAndSetIfChanged(ref _editingTest, value);
         }
 
+        // Свойство для валидации
+        public bool CanSaveTest => !string.IsNullOrWhiteSpace(EditingTest?.Title) && 
+                                   EditingTest.Questions.Count > 0;
+
         public ICommand SaveCommand { get; private set; }
         public ICommand AddQuestionCommand { get; private set; }
         public ICommand RemoveQuestionCommand { get; private set; }
@@ -37,11 +41,24 @@ namespace AvaloniaTests.ViewModels
             EditingTest = testToEdit ?? new Test("", "");
 
             InitializeCommands();
+            SetupValidation();
+        }
+
+        private void SetupValidation()
+        {
+            this.WhenAnyValue(x => x.EditingTest.Title, x => x.EditingTest.Questions.Count)
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(CanSaveTest)));
+
+            EditingTest.Questions.CollectionChanged += (s, e) =>
+            {
+                this.RaisePropertyChanged(nameof(CanSaveTest));
+            };
         }
 
         private void InitializeCommands()
         {
-            SaveCommand = ReactiveCommand.Create(SafeSaveTest);
+            SaveCommand = ReactiveCommand.Create(SafeSaveTest, this.WhenAnyValue(x => x.CanSaveTest));
+            
             AddQuestionCommand = ReactiveCommand.CreateFromTask(AddQuestionAsync);
             RemoveQuestionCommand = ReactiveCommand.Create<Question>(RemoveQuestion);
             AddAnswerCommand = ReactiveCommand.Create<Question>(AddAnswer);
@@ -49,10 +66,14 @@ namespace AvaloniaTests.ViewModels
             EditQuestionCommand = ReactiveCommand.CreateFromTask<Question>(EditQuestionAsync);
             SetCorrectAnswerCommand = ReactiveCommand.Create<object[]>(SetCorrectAnswer);
         }
-
-        //Сохранение с валидацией   
+        
         private void SafeSaveTest()
         {
+            if (!CanSaveTest)
+            {
+                return;
+            }
+
             EditingTest.QuestionsData = EditingTest.Questions.ToList();
             
             foreach (var question in EditingTest.Questions)
@@ -84,19 +105,20 @@ namespace AvaloniaTests.ViewModels
             if (question != null)
             {
                 EditingTest.Questions.Add(question);
-                this.RaisePropertyChanged(nameof(EditingTest));
-                this.RaisePropertyChanged(nameof(EditingTest.Questions));
+                UpdateValidationProperties();
             }
         }
 
         private void RemoveQuestion(Question question)
         {
             EditingTest.Questions.Remove(question);
+            UpdateValidationProperties();
         }
 
         private void AddAnswer(Question question)
         {
             question.Answers.Add(new Answer(""));
+            UpdateValidationProperties();
         }
 
         private void RemoveAnswer(Answer answer)
@@ -111,7 +133,7 @@ namespace AvaloniaTests.ViewModels
                         question.CorrectAnswerId = question.Answers.FirstOrDefault()?.Id ?? Guid.Empty;
                     }
                     
-                    this.RaisePropertyChanged(nameof(EditingTest));
+                    UpdateValidationProperties();
                     break;
                 }
             }
@@ -130,8 +152,7 @@ namespace AvaloniaTests.ViewModels
                 }
                 question.CorrectAnswerId = editedQuestion.CorrectAnswerId;
                 
-                this.RaisePropertyChanged(nameof(EditingTest));
-                this.RaisePropertyChanged(nameof(EditingTest.Questions));
+                UpdateValidationProperties();
             }
         }
 
@@ -140,7 +161,15 @@ namespace AvaloniaTests.ViewModels
             if (parameters.Length == 2 && parameters[0] is Question question && parameters[1] is Answer answer)
             {
                 question.CorrectAnswerId = answer.Id;
+                UpdateValidationProperties();
             }
+        }
+
+        private void UpdateValidationProperties()
+        {
+            this.RaisePropertyChanged(nameof(EditingTest));
+            this.RaisePropertyChanged(nameof(EditingTest.Questions));
+            this.RaisePropertyChanged(nameof(CanSaveTest));
         }
     }
 }

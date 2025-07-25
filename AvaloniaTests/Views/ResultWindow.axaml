@@ -58,7 +58,8 @@
                 </Border>
                 
                 <Button Content="Закрыть" 
-                        HorizontalAlignment="Center" 
+                        HorizontalAlignment="Center"
+						Classes="HighlightedButton"
                         Width="120" 
                         Height="35"
                         Background="#FF757575"
