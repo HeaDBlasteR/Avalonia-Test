@@ -98,10 +98,10 @@ namespace AvaloniaTests.Services
             var resultService = _serviceProvider.GetRequiredService<IResultService>();
             var testService = _serviceProvider.GetRequiredService<ITestService>();
             
-            var mainWindow = GetMainWindow();
-            var viewModel = new ResultsListViewModel(resultService, testService, mainWindow);
+            var viewModel = new ResultsListViewModel(resultService, testService);
             var window = new ResultsListWindow(viewModel);
             
+            var mainWindow = GetMainWindow();
             if (mainWindow != null)
             {
                 var result = await window.ShowDialog<bool?>(mainWindow);

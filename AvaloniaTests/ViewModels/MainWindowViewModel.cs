@@ -16,14 +16,14 @@ namespace AvaloniaTests.ViewModels
         public ObservableCollection<Test> Tests { get; } = new();
         public ObservableCollection<TestResult> Results { get; } = new();
 
-        public ICommand CreateTestCommand { get; }
-        public ICommand EditTestCommand { get; }
-        public ICommand DeleteTestCommand { get; }
-        public ICommand TakeTestCommand { get; }
-        public ICommand ViewResultsCommand { get; }
-        public ICommand OpenTestListCommand { get; }
-        public ICommand StartTestCommand { get; }
-        public ICommand OpenResultsTabCommand { get; }
+        public ICommand CreateTestCommand { get; private set; }
+        public ICommand EditTestCommand { get; private set; }
+        public ICommand DeleteTestCommand { get; private set; }
+        public ICommand TakeTestCommand { get; private set; }
+        public ICommand ViewResultsCommand { get; private set; }
+        public ICommand OpenTestListCommand { get; private set; }
+        public ICommand StartTestCommand { get; private set; }
+        public ICommand OpenResultsTabCommand { get; private set; }
 
         public MainWindowViewModel(ITestService testService, IResultService resultService, 
             IErrorDialogService errorDialogService, IWindowService windowService)
@@ -32,6 +32,12 @@ namespace AvaloniaTests.ViewModels
             _resultService = resultService;
             _windowService = windowService;
 
+            InitializeCommands();
+            LoadData();
+        }
+
+        private void InitializeCommands()
+        {
             CreateTestCommand = ReactiveCommand.CreateFromTask(CreateTestAsync);
             EditTestCommand = ReactiveCommand.CreateFromTask<Test>(EditTestAsync);
             DeleteTestCommand = ReactiveCommand.Create<Test>(DeleteTest);
@@ -40,8 +46,6 @@ namespace AvaloniaTests.ViewModels
             OpenTestListCommand = ReactiveCommand.CreateFromTask(OpenTestListAsync);
             StartTestCommand = ReactiveCommand.CreateFromTask(OpenStartTestWindowAsync);
             OpenResultsTabCommand = ReactiveCommand.CreateFromTask(OpenResultsTabAsync);
-
-            LoadData();
         }
 
         private void LoadData()

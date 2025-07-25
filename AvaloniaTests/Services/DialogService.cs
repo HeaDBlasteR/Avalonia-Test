@@ -6,7 +6,6 @@ using Avalonia.Media;
 using AvaloniaTests.Models;
 using AvaloniaTests.ViewModels;
 using AvaloniaTests.Views;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 

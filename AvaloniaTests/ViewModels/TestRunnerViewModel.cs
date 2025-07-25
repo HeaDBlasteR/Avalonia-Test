@@ -33,10 +33,10 @@ namespace AvaloniaTests.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedAnswer, value);
         }
 
-        public ICommand NextQuestionCommand { get; }
-        public ICommand PreviousQuestionCommand { get; }
-        public ICommand FinishTestCommand { get; }
-        public ICommand SelectAnswerCommand { get; }
+        public ICommand NextQuestionCommand { get; private set; }
+        public ICommand PreviousQuestionCommand { get; private set; }
+        public ICommand FinishTestCommand { get; private set; }
+        public ICommand SelectAnswerCommand { get; private set; }
 
         public TestRunnerViewModel(Test test, IResultService resultService)
         {
@@ -49,6 +49,11 @@ namespace AvaloniaTests.ViewModels
 
             SelectedAnswer = _userAnswers.TryGetValue(CurrentQuestion.Id, out var answer) ? answer : null;
 
+            InitializeCommands();
+        }
+
+        private void InitializeCommands()
+        {
             NextQuestionCommand = ReactiveCommand.Create(NextQuestion);
             PreviousQuestionCommand = ReactiveCommand.Create(PreviousQuestion);
             FinishTestCommand = ReactiveCommand.CreateFromTask(FinishTestAsync);

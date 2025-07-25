@@ -10,7 +10,9 @@ namespace AvaloniaTests.Views
         {
             InitializeComponent();
             DataContext = viewModel;
-            viewModel.SetCurrentWindow(this);
+            
+            // Подписываемся на событие закрытия из ViewModel
+            viewModel.CloseRequested += (sender, e) => Close();
         }
 
         private void InitializeComponent()

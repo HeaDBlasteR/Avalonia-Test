@@ -1,10 +1,9 @@
-using Avalonia.Controls;
 using AvaloniaTests.Models;
 using AvaloniaTests.Services;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -13,7 +12,6 @@ namespace AvaloniaTests.ViewModels
         private readonly ITestService _testService;
         private readonly IResultService? _resultService;
         private readonly IWindowService _windowService;
-        private readonly Window _window;
         private readonly bool _selectMode;
         
         private ObservableCollection<Test> _tests = new();
@@ -25,29 +23,40 @@ namespace AvaloniaTests.ViewModels
 
         public bool IsSelectMode => _selectMode;
 
-        public ICommand EditTestCommand { get; }
-        public ICommand DeleteTestCommand { get; }
-        public ICommand CloseCommand { get; }
-        public ICommand CreateTestCommand { get; }
-        public ICommand SelectTestCommand { get; }
-        public ICommand RefreshCommand { get; }
+        public ICommand EditTestCommand { get; private set; }
+        public ICommand DeleteTestCommand { get; private set; }
+        public ICommand CloseCommand { get; private set; }
+        public ICommand CreateTestCommand { get; private set; }
+        public ICommand SelectTestCommand { get; private set; }
+        public ICommand RefreshCommand { get; private set; }
 
-        public TestListViewModel(ITestService testService, Window window, bool selectMode = false, IResultService? resultService = null)
+        // Событие для запроса закрытия окна
+        public event EventHandler? CloseRequested;
+
+        public TestListViewModel(ITestService testService, bool selectMode = false, IResultService? resultService = null)
         {
             _testService = testService;
-            _window = window;
             _selectMode = selectMode;
             _resultService = resultService;
             _windowService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IWindowService>(ServiceProvider.Instance);
             
+            InitializeCommands();
+            LoadTests();
+        }
+
+        private void InitializeCommands()
+        {
             EditTestCommand = ReactiveCommand.CreateFromTask<Test>(EditTestAsync);
             DeleteTestCommand = ReactiveCommand.Create<Test>(DeleteTest);
-            CloseCommand = ReactiveCommand.Create(() => _window.Close());
+            CloseCommand = ReactiveCommand.Create(RequestClose);
             CreateTestCommand = ReactiveCommand.CreateFromTask(CreateTestAsync);
             SelectTestCommand = ReactiveCommand.CreateFromTask<Test>(SelectTestAsync);
             RefreshCommand = ReactiveCommand.Create(LoadTests);
+        }
 
-            LoadTests();
+        private void RequestClose()
+        {
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
         public void LoadTests()
@@ -95,7 +104,7 @@ namespace AvaloniaTests.ViewModels
                 var result = await _windowService.ShowTestRunnerAsync(test);
                 if (result)
                 {
-                    _window.Close();
+                    RequestClose();
                 }
             }
         }

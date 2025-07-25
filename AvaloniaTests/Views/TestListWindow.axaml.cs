@@ -13,8 +13,11 @@ namespace AvaloniaTests.Views
         public TestListWindow(ITestService testService, IResultService? resultService, bool selectMode = false)
         {
             InitializeComponent();
-            var vm = new TestListViewModel(testService, this, selectMode, resultService);
+            var vm = new TestListViewModel(testService, selectMode, resultService);
             DataContext = vm;
+            
+            // Подписываемся на событие закрытия из ViewModel
+            vm.CloseRequested += (sender, e) => Close();
         }
 
         private void InitializeComponent()

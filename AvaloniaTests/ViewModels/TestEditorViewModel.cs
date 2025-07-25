@@ -22,13 +22,13 @@ namespace AvaloniaTests.ViewModels
             set => this.RaiseAndSetIfChanged(ref _editingTest, value);
         }
 
-        public ICommand SaveCommand { get; }
-        public ICommand AddQuestionCommand { get; }
-        public ICommand RemoveQuestionCommand { get; }
-        public ICommand AddAnswerCommand { get; }
-        public ICommand RemoveAnswerCommand { get; }
-        public ICommand EditQuestionCommand { get; }
-        public ICommand SetCorrectAnswerCommand { get; }
+        public ICommand SaveCommand { get; private set; }
+        public ICommand AddQuestionCommand { get; private set; }
+        public ICommand RemoveQuestionCommand { get; private set; }
+        public ICommand AddAnswerCommand { get; private set; }
+        public ICommand RemoveAnswerCommand { get; private set; }
+        public ICommand EditQuestionCommand { get; private set; }
+        public ICommand SetCorrectAnswerCommand { get; private set; }
 
         public TestEditorViewModel(ITestService testService, Test? testToEdit = null)
         {
@@ -36,6 +36,11 @@ namespace AvaloniaTests.ViewModels
             _dialogService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IDialogService>(ServiceProvider.Instance);
             EditingTest = testToEdit ?? new Test("", "");
 
+            InitializeCommands();
+        }
+
+        private void InitializeCommands()
+        {
             SaveCommand = ReactiveCommand.Create(SafeSaveTest);
             AddQuestionCommand = ReactiveCommand.CreateFromTask(AddQuestionAsync);
             RemoveQuestionCommand = ReactiveCommand.Create<Question>(RemoveQuestion);

@@ -11,11 +11,6 @@ namespace AvaloniaTests.Models
         [JsonPropertyName("Text")]
         public string Text { get; set; }
 
-        public Answer()
-        {
-            Text = "";
-        }
-
         public Answer(string text)
         {
             Id = Guid.NewGuid();

@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ReactiveUI;
 using System.Windows.Input;
-using Avalonia.Controls;
+using System;
 
 namespace AvaloniaTests.ViewModels
 {
@@ -12,8 +12,6 @@ namespace AvaloniaTests.ViewModels
         private readonly IResultService _resultService;
         private readonly ITestService _testService;
         private readonly IWindowService _windowService;
-        private readonly Window? _parentWindow;
-        private Window? _currentWindow;
         private int _resultsCount;
 
         // Коллекция для отображения результатов
@@ -27,22 +25,21 @@ namespace AvaloniaTests.ViewModels
 
         public bool HasNoResults => Results.Count == 0;
 
-        public ICommand ViewResultCommand { get; }
-        public ICommand DeleteResultCommand { get; }
-        public ICommand CloseCommand { get; }
-        public ICommand RefreshCommand { get; }
+        public ICommand ViewResultCommand { get; private set; }
+        public ICommand DeleteResultCommand { get; private set; }
+        public ICommand CloseCommand { get; private set; }
+        public ICommand RefreshCommand { get; private set; }
 
-        public ResultsListViewModel(IResultService resultService, ITestService testService, Window? parentWindow = null)
+        // Событие для запроса закрытия окна
+        public event EventHandler? CloseRequested;
+
+        public ResultsListViewModel(IResultService resultService, ITestService testService)
         {
             _resultService = resultService;
             _testService = testService;
-            _parentWindow = parentWindow;
             _windowService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IWindowService>(ServiceProvider.Instance);
 
-            ViewResultCommand = ReactiveCommand.CreateFromTask<TestResultDisplayItem>(ViewResultAsync);
-            DeleteResultCommand = ReactiveCommand.Create<TestResultDisplayItem>(DeleteResult);
-            CloseCommand = ReactiveCommand.Create(CloseWindow);
-            RefreshCommand = ReactiveCommand.Create(LoadResults);
+            InitializeCommands();
 
             Results.CollectionChanged += (s, e) => 
             {
@@ -52,14 +49,17 @@ namespace AvaloniaTests.ViewModels
             LoadResults();
         }
 
-        public void SetCurrentWindow(Window window)
+        private void InitializeCommands()
         {
-            _currentWindow = window;
+            ViewResultCommand = ReactiveCommand.CreateFromTask<TestResultDisplayItem>(ViewResultAsync);
+            DeleteResultCommand = ReactiveCommand.Create<TestResultDisplayItem>(DeleteResult);
+            CloseCommand = ReactiveCommand.Create(RequestClose);
+            RefreshCommand = ReactiveCommand.Create(LoadResults);
         }
 
-        private void CloseWindow()
+        private void RequestClose()
         {
-            _currentWindow?.Close();
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private void DeleteResult(TestResultDisplayItem item)

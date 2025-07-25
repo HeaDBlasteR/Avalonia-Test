@@ -27,22 +27,18 @@ namespace AvaloniaTests.ViewModels
 
         public bool CanRemoveAnswers => EditingQuestion?.Answers?.Count > 2;
 
-        public ICommand SaveCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand AddAnswerCommand { get; }
-        public ICommand RemoveAnswerCommand { get; }
-        public ICommand SetCorrectAnswerCommand { get; }
+        public ICommand SaveCommand { get; private set; }
+        public ICommand CancelCommand { get; private set; }
+        public ICommand AddAnswerCommand { get; private set; }
+        public ICommand RemoveAnswerCommand { get; private set; }
+        public ICommand SetCorrectAnswerCommand { get; private set; }
 
         public QuestionEditorViewModel(Question? question = null)
         {
             IsEditMode = question != null;
             EditingQuestion = question != null ? CreateCopyOfQuestion(question) : CreateNewQuestion();
 
-            SaveCommand = ReactiveCommand.Create(Save);
-            CancelCommand = ReactiveCommand.Create(Cancel);
-            AddAnswerCommand = ReactiveCommand.Create(AddAnswer);
-            RemoveAnswerCommand = ReactiveCommand.Create<Answer>(RemoveAnswer);
-            SetCorrectAnswerCommand = ReactiveCommand.Create<Answer>(SetCorrectAnswer);
+            InitializeCommands();
 
             EditingQuestion.Answers.CollectionChanged += (s, e) => 
             {
@@ -51,6 +47,15 @@ namespace AvaloniaTests.ViewModels
 
             this.WhenAnyValue(x => x.IsEditMode)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(WindowTitle)));
+        }
+
+        private void InitializeCommands()
+        {
+            SaveCommand = ReactiveCommand.Create(Save);
+            CancelCommand = ReactiveCommand.Create(Cancel);
+            AddAnswerCommand = ReactiveCommand.Create(AddAnswer);
+            RemoveAnswerCommand = ReactiveCommand.Create<Answer>(RemoveAnswer);
+            SetCorrectAnswerCommand = ReactiveCommand.Create<Answer>(SetCorrectAnswer);
         }
 
         private Question CreateNewQuestion()
@@ -103,6 +108,8 @@ namespace AvaloniaTests.ViewModels
         private void AddAnswer()
         {
             EditingQuestion.Answers.Add(new Answer(""));
+
+            this.RaisePropertyChanged(nameof(CanRemoveAnswers));
         }
 
         private void RemoveAnswer(Answer answer)

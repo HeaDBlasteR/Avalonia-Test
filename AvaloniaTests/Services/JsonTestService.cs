@@ -9,6 +9,7 @@ namespace AvaloniaTests.Services
 {
     public class JsonTestService : ITestService
     {
+        private const string TESTS_FILE_NAME = "tests.json";
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
@@ -23,12 +24,12 @@ namespace AvaloniaTests.Services
             var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AvaloniaTests");
             Directory.CreateDirectory(appDataPath);
             
-            _testFilePath = Path.Combine(appDataPath, "tests.json");
+            _testFilePath = Path.Combine(appDataPath, TESTS_FILE_NAME);
             
             if (!File.Exists(_testFilePath))
             {
                 var exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? "";
-                var appJsonPath = Path.Combine(exeDir, "tests.json");
+                var appJsonPath = Path.Combine(exeDir, TESTS_FILE_NAME);
                 
                 if (File.Exists(appJsonPath))
                 {
@@ -36,14 +37,14 @@ namespace AvaloniaTests.Services
                 }
                 else
                 {
-                    var sourceJsonPath = Path.Combine(Environment.CurrentDirectory, "tests.json");
+                    var sourceJsonPath = Path.Combine(Environment.CurrentDirectory, TESTS_FILE_NAME);
                     if (File.Exists(sourceJsonPath))
                     {
                         File.Copy(sourceJsonPath, _testFilePath, true);
                     }
                     else
                     {
-                        var projectPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "tests.json");
+                        var projectPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", TESTS_FILE_NAME);
                         if (File.Exists(projectPath))
                         {
                             File.Copy(projectPath, _testFilePath, true);

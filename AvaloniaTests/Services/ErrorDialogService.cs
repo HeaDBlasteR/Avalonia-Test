@@ -4,11 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 
 namespace AvaloniaTests.Services
 {
-    public interface IErrorDialogService
-    {
-        void ShowError(string title, string message);
-    }
-
     public class ErrorDialogService : IErrorDialogService
     {
         public void ShowError(string title, string message)

@@ -1,4 +1,4 @@
-﻿using AvaloniaTests.Models;
+using AvaloniaTests.Models;
 using System;
 using System.Collections.Generic;
 

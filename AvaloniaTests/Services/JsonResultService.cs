@@ -9,6 +9,7 @@ namespace AvaloniaTests.Services
 {
     public class JsonResultService : IResultService
     {
+        private const string RESULTS_FILE_NAME = "results.json";
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
@@ -24,12 +25,12 @@ namespace AvaloniaTests.Services
             var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AvaloniaTests");
             Directory.CreateDirectory(appDataPath);
             
-            _resultsFilePath = Path.Combine(appDataPath, "results.json");
+            _resultsFilePath = Path.Combine(appDataPath, RESULTS_FILE_NAME);
             
             if (!File.Exists(_resultsFilePath))
             {
                 var exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? "";
-                var appJsonPath = Path.Combine(exeDir, "results.json");
+                var appJsonPath = Path.Combine(exeDir, RESULTS_FILE_NAME);
                 
                 if (File.Exists(appJsonPath))
                 {
@@ -37,14 +38,14 @@ namespace AvaloniaTests.Services
                 }
                 else
                 {
-                    var sourceJsonPath = Path.Combine(Environment.CurrentDirectory, "results.json");
+                    var sourceJsonPath = Path.Combine(Environment.CurrentDirectory, RESULTS_FILE_NAME);
                     if (File.Exists(sourceJsonPath))
                     {
                         File.Copy(sourceJsonPath, _resultsFilePath, true);
                     }
                     else
                     {
-                        var projectPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "results.json");
+                        var projectPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", RESULTS_FILE_NAME);
                         if (File.Exists(projectPath))
                         {
                             File.Copy(projectPath, _resultsFilePath, true);
@@ -54,8 +55,8 @@ namespace AvaloniaTests.Services
                             var currentDir = Directory.GetCurrentDirectory();
                             var possiblePaths = new[]
                             {
-                                Path.Combine(currentDir, "AvaloniaTests", "results.json"),
-                                Path.Combine(currentDir, "results.json")
+                                Path.Combine(currentDir, "AvaloniaTests", RESULTS_FILE_NAME),
+                                Path.Combine(currentDir, RESULTS_FILE_NAME)
                             };
 
                             bool found = false;
