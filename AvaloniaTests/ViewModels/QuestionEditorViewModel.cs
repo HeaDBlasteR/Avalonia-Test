@@ -27,7 +27,6 @@ namespace AvaloniaTests.ViewModels
 
         public bool CanRemoveAnswers => EditingQuestion?.Answers?.Count > 2;
 
-        // Свойство для валидации
         public bool CanSaveQuestion => !string.IsNullOrWhiteSpace(EditingQuestion?.Text) &&
                                       EditingQuestion.Answers.Count >= 2 &&
                                       EditingQuestion.Answers.All(a => !string.IsNullOrWhiteSpace(a.Text)) &&
@@ -50,7 +49,6 @@ namespace AvaloniaTests.ViewModels
             SetupValidation();
         }
 
-        //Подписываемся на валидацию
         private void SetupValidation()
         {
             this.WhenAnyValue(x => x.EditingQuestion.Text, x => x.EditingQuestion.CorrectAnswerId)
@@ -64,7 +62,6 @@ namespace AvaloniaTests.ViewModels
 
         private void InitializeCommands()
         {
-            // SaveCommand зависит от валидации - кнопка автоматически неактивна при нарушении условий
             SaveCommand = ReactiveCommand.Create(Save, this.WhenAnyValue(x => x.CanSaveQuestion));
             
             CancelCommand = ReactiveCommand.Create(Cancel);
@@ -79,7 +76,7 @@ namespace AvaloniaTests.ViewModels
             var question = new Question("");
             question.Answers.Add(new Answer(""));
             question.Answers.Add(new Answer(""));
-            question.CorrectAnswerId = Guid.Empty; // Не выбираем правильный ответ по умолчанию
+            question.CorrectAnswerId = Guid.Empty;
             return question;
         }
 
@@ -102,7 +99,6 @@ namespace AvaloniaTests.ViewModels
 
         private void Save()
         {
-            //Доп проверка
             if (!CanSaveQuestion)
             {
                 return;

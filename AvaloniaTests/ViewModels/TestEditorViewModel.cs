@@ -20,7 +20,6 @@ namespace AvaloniaTests.ViewModels
             set => this.RaiseAndSetIfChanged(ref _editingTest, value);
         }
 
-        // Свойство для валидации
         public bool CanSaveTest => !string.IsNullOrWhiteSpace(EditingTest?.Title) && 
                                    EditingTest.Questions.Count > 0;
 
@@ -76,19 +75,11 @@ namespace AvaloniaTests.ViewModels
 
             EditingTest.QuestionsData = EditingTest.Questions.ToList();
             
-            foreach (var question in EditingTest.Questions)
-            {
-                if (question.Id == Guid.Empty)
-                    question.Id = Guid.NewGuid();
+            foreach (var question in EditingTest.Questions.Where(q => q.Id == Guid.Empty))
+                question.Id = Guid.NewGuid();
 
-                question.AnswersData = question.Answers.ToList();
-                
-                foreach (var answer in question.Answers)
-                {
-                    if (answer.Id == Guid.Empty)
-                        answer.Id = Guid.NewGuid();
-                }
-            }
+            foreach (var question in EditingTest.Questions)
+                question.FixCollections();
 
             _testService.SaveTest(EditingTest);
             RequestClose(true);

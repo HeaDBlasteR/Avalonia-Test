@@ -14,7 +14,6 @@ namespace AvaloniaTests.ViewModels
         private readonly IWindowService _windowService;
         private int _resultsCount;
 
-        // Коллекция для отображения результатов
         public ObservableCollection<TestResultDisplayItem> Results { get; } = new();
 
         public int ResultsCount

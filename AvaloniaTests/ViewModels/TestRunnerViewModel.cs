@@ -18,20 +18,17 @@ namespace AvaloniaTests.ViewModels
         private Dictionary<Guid, Guid> _userAnswers = new();
         private Guid? _selectedAnswer;
 
-        //Текущий вопрос
         public Question CurrentQuestion => _test.Questions[_currentQuestionIndex];
         public string TestTitle => _test.Title;
         public int QuestionNumber => _currentQuestionIndex + 1;
         public int TotalQuestions => _test.Questions.Count;
 
-        // ID выбранного ответа
         public Guid? SelectedAnswer
         {
             get => _selectedAnswer;
             set => this.RaiseAndSetIfChanged(ref _selectedAnswer, value);
         }
 
-        // Свойства для управления видимостью и доступностью кнопок навигации
         public bool CanGoNext => _currentQuestionIndex < _test.Questions.Count - 1;
         public bool CanGoPrevious => _currentQuestionIndex > 0;
         public bool HasMultipleQuestions => _test.Questions.Count > 1;
@@ -43,7 +40,8 @@ namespace AvaloniaTests.ViewModels
 
         public event EventHandler<bool>? CloseRequested;
 
-        public TestRunnerViewModel(Test test, IResultService resultService, IDialogService dialogService, string currentUserName = "Пользователь")
+        public TestRunnerViewModel(Test test, IResultService resultService, IDialogService dialogService,
+            string currentUserName = "Пользователь")
         {
             _test = test;
             _resultService = resultService;

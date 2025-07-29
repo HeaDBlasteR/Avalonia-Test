@@ -81,7 +81,7 @@ namespace AvaloniaTests.Services
         public async Task<bool> ShowTestListAsync(bool selectMode = false)
         {
             var testService = _serviceProvider.GetRequiredService<ITestService>();
-            var windowService = this; // »спользуем текущий экземпл€р
+            var windowService = this;
             var resultService = selectMode ? _serviceProvider.GetRequiredService<IResultService>() : null;
             
             var window = new TestListWindow(testService, windowService, resultService, selectMode);
@@ -101,7 +101,7 @@ namespace AvaloniaTests.Services
         {
             var resultService = _serviceProvider.GetRequiredService<IResultService>();
             var testService = _serviceProvider.GetRequiredService<ITestService>();
-            var windowService = this; // »спользуем текущий экземпл€р
+            var windowService = this;
             
             var viewModel = new ResultsListViewModel(resultService, testService, windowService);
             var window = new ResultsListWindow(viewModel);

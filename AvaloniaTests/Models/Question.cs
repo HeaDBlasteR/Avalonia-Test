@@ -46,14 +46,6 @@ namespace AvaloniaTests.Models
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Question()
-        {
-            Text = "";
-            AnswersData = new List<Answer>();
-            Answers = new ObservableCollection<Answer>();
-            CorrectAnswerId = Guid.Empty;
-        }
-
         public Question(string text)
         {
             Id = Guid.NewGuid();

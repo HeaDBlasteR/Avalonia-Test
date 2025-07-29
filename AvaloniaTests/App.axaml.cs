@@ -14,7 +14,6 @@ namespace AvaloniaTests
     {
         public static IServiceProvider Instance { get; private set; } = null!;
 
-        //инициализация для создания экземпляров зависимостей в ViewModel
         public static void Init()
         {
             var services = new ServiceCollection();
@@ -54,7 +53,6 @@ namespace AvaloniaTests
         }
     }
 
-    //инициализация в начале приложения
     public class App : Application
     {
         public App()
@@ -62,21 +60,18 @@ namespace AvaloniaTests
             ServiceProvider.Init();
         }
 
-        //инициализация XAML
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
             base.Initialize();
         }
 
-        // вызывается после полной инициализации приложения, устанавливает главное окно
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = ServiceProvider.Instance.GetRequiredService<MainWindow>();
                 
-                // установка режима завершения приложения при закрытии главного окна
                 desktop.ShutdownMode = Avalonia.Controls.ShutdownMode.OnMainWindowClose;
             }
             base.OnFrameworkInitializationCompleted();

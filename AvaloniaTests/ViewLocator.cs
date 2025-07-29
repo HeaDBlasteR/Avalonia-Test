@@ -6,8 +6,6 @@ using System;
 
 namespace AvaloniaTests
 {
-    //Реализует IDataTemplate для поиска и создания соответствующего View по ViewModel
-    //Использует соглашение об именовании: заменяет "ViewModel" на "View" в полном имени типа
     public class ViewLocator : IDataTemplate
     {
         public Control? Build(object? param)
@@ -26,7 +24,6 @@ namespace AvaloniaTests
             return new TextBlock { Text = "Not Found: " + name };
         }
 
-        // Определяет, подходит ли данный шаблон для переданных данных
         public bool Match(object? data)
         {
             return data is ViewModelBase;

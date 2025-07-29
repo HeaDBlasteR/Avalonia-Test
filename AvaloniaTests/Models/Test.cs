@@ -48,14 +48,6 @@ namespace AvaloniaTests.Models
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Test()
-        {
-            Title = "";
-            Description = "";
-            QuestionsData = new List<Question>();
-            Questions = new ObservableCollection<Question>();
-        }
-
         public Test(string title, string description)
         {
             Id = Guid.NewGuid();
@@ -65,7 +57,6 @@ namespace AvaloniaTests.Models
             Questions = new ObservableCollection<Question>();
         }
 
-        //Синхронизирует коллекции вопросов и их идентификаторы после изменения теста
         public void FixCollections()
         {
             Questions = new ObservableCollection<Question>(QuestionsData);

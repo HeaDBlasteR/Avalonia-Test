@@ -32,7 +32,8 @@ namespace AvaloniaTests.ViewModels
 
         public event EventHandler? CloseRequested;
 
-        public TestListViewModel(ITestService testService, IWindowService windowService, bool selectMode = false, IResultService? resultService = null)
+        public TestListViewModel(ITestService testService, IWindowService windowService,
+             IResultService? resultService = null, bool selectMode = false)
         {
             _testService = testService;
             _windowService = windowService;
