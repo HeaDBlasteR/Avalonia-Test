@@ -70,7 +70,9 @@ namespace AvaloniaTests
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = ServiceProvider.Instance.GetRequiredService<MainWindow>();
+                var mainWindow = ServiceProvider.Instance.GetRequiredService<MainWindow>();
+                mainWindow.DataContext = ServiceProvider.Instance.GetRequiredService<MainWindowViewModel>();
+                desktop.MainWindow = mainWindow;
                 
                 desktop.ShutdownMode = Avalonia.Controls.ShutdownMode.OnMainWindowClose;
             }

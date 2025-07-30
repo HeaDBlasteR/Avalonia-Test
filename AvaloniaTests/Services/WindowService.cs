@@ -30,15 +30,17 @@ namespace AvaloniaTests.Services
             var testService = _serviceProvider.GetRequiredService<ITestService>();
             var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
             var viewModel = new TestEditorViewModel(testService, dialogService, testToEdit);
-            var window = new TestEditorWindow(viewModel);
-            
+            var window = new TestEditorWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, result) => window.Close(result);
+
             var mainWindow = GetMainWindow();
             if (mainWindow != null)
             {
                 var result = await window.ShowDialog<bool?>(mainWindow);
                 return result == true;
             }
-            
+
             window.Show();
             return false;
         }
@@ -49,15 +51,17 @@ namespace AvaloniaTests.Services
             var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
             var currentUserName = Environment.UserName ?? "Пользователь";
             var viewModel = new TestRunnerViewModel(test, resultService, dialogService, currentUserName);
-            var window = new TestRunnerWindow(viewModel);
-            
+            var window = new TestRunnerWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, result) => window.Close(result);
+
             var mainWindow = GetMainWindow();
             if (mainWindow != null)
             {
                 var result = await window.ShowDialog<bool?>(mainWindow);
                 return result == true;
             }
-            
+
             window.Show();
             return false;
         }
@@ -65,8 +69,9 @@ namespace AvaloniaTests.Services
         public async Task ShowResultViewerAsync(TestResult result, Test? test)
         {
             var viewModel = new ResultViewModel(result, test);
-            var window = new ResultWindow(viewModel);
-            
+            var window = new ResultWindow();
+            window.DataContext = viewModel;
+
             var mainWindow = GetMainWindow();
             if (mainWindow != null)
             {
@@ -83,16 +88,19 @@ namespace AvaloniaTests.Services
             var testService = _serviceProvider.GetRequiredService<ITestService>();
             var windowService = this;
             var resultService = selectMode ? _serviceProvider.GetRequiredService<IResultService>() : null;
-            
-            var window = new TestListWindow(testService, windowService, resultService, selectMode);
-            
+
+            var viewModel = new TestListViewModel(testService, windowService, resultService, selectMode);
+            var window = new TestListWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, e) => window.Close();
+
             var mainWindow = GetMainWindow();
             if (mainWindow != null)
             {
                 var result = await window.ShowDialog<bool?>(mainWindow);
                 return result == true;
             }
-            
+
             window.Show();
             return false;
         }
@@ -104,7 +112,9 @@ namespace AvaloniaTests.Services
             var windowService = this;
             
             var viewModel = new ResultsListViewModel(resultService, testService, windowService);
-            var window = new ResultsListWindow(viewModel);
+            var window = new ResultsListWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, e) => window.Close();
             
             var mainWindow = GetMainWindow();
             if (mainWindow != null)
@@ -120,7 +130,9 @@ namespace AvaloniaTests.Services
         public async Task<Question?> ShowQuestionEditorAsync(Question? question = null)
         {
             var viewModel = new QuestionEditorViewModel(question);
-            var window = new QuestionEditorWindow(viewModel);
+            var window = new QuestionEditorWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, result) => window.Close(result);
             
             var mainWindow = GetMainWindow();
             if (mainWindow != null)

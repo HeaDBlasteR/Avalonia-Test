@@ -1,16 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using AvaloniaTests.ViewModels;
 using Avalonia.Interactivity;
 
 namespace AvaloniaTests.Views
 {
     public partial class ResultWindow : Window
     {
-        public ResultWindow(ResultViewModel viewModel)
+        public ResultWindow()
         {
             InitializeComponent();
-            DataContext = viewModel;
         }
 
         private void InitializeComponent()

@@ -11,7 +11,9 @@ namespace AvaloniaTests.Services
         public void ShowError(string title, string message)
         {
             var viewModel = new ErrorDialogViewModel(title, message);
-            var window = new ErrorDialogWindow(viewModel);
+            var window = new ErrorDialogWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, e) => window.Close();
             
             var mainWindow = GetMainWindow();
             if (mainWindow != null)

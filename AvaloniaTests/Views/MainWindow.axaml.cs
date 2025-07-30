@@ -1,8 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using AvaloniaTests.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace AvaloniaTests.Views
@@ -12,7 +10,6 @@ namespace AvaloniaTests.Views
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = AvaloniaTests.ServiceProvider.Instance.GetRequiredService<MainWindowViewModel>();
             
             Closed += OnMainWindowClosed;
         }

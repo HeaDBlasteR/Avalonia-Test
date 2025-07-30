@@ -1,18 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using AvaloniaTests.ViewModels;
 using Avalonia.Interactivity;
 
 namespace AvaloniaTests.Views
 {
     public partial class TestEditorWindow : Window
     {
-        public TestEditorWindow(TestEditorViewModel viewModel)
+        public TestEditorWindow()
         {
             InitializeComponent();
-            DataContext = viewModel;
-            
-            viewModel.CloseRequested += (sender, result) => Close(result);
         }
 
         private void InitializeComponent()

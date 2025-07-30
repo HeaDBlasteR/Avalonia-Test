@@ -26,15 +26,17 @@ namespace AvaloniaTests.Services
         public async Task<Question?> ShowQuestionEditorAsync(Question? question = null)
         {
             var viewModel = new QuestionEditorViewModel(question);
-            var window = new QuestionEditorWindow(viewModel);
-            
+            var window = new QuestionEditorWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, result) => window.Close(result);
+
             var mainWindow = GetMainWindow();
             if (mainWindow != null)
             {
                 var result = await window.ShowDialog<bool?>(mainWindow);
                 return result == true ? viewModel.EditingQuestion : null;
             }
-            
+
             window.Show();
             return null;
         }
@@ -42,7 +44,9 @@ namespace AvaloniaTests.Services
         public async Task ShowTestCompletionDialogAsync(TestResult result)
         {
             var viewModel = new TestCompletionDialogViewModel(result);
-            var window = new TestCompletionDialogWindow(viewModel);
+            var window = new TestCompletionDialogWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, e) => window.Close();
 
             var mainWindow = GetMainWindow();
             if (mainWindow != null)
@@ -58,7 +62,9 @@ namespace AvaloniaTests.Services
         public async Task<bool> ShowConfirmationAsync(string title, string message)
         {
             var viewModel = new ConfirmationDialogViewModel(title, message);
-            var window = new ConfirmationDialogWindow(viewModel);
+            var window = new ConfirmationDialogWindow();
+            window.DataContext = viewModel;
+            viewModel.CloseRequested += (sender, result) => window.Close(result);
 
             var mainWindow = GetMainWindow();
             if (mainWindow != null)

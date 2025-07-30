@@ -1,17 +1,13 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using AvaloniaTests.ViewModels;
 
 namespace AvaloniaTests.Views
 {
     public partial class ConfirmationDialogWindow : Window
     {
-        public ConfirmationDialogWindow(ConfirmationDialogViewModel viewModel)
+        public ConfirmationDialogWindow()
         {
             InitializeComponent();
-            DataContext = viewModel;
-            
-            viewModel.CloseRequested += (sender, result) => Close(result);
         }
 
         private void InitializeComponent()
