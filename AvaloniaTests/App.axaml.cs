@@ -1,4 +1,4 @@
-using Avalonia;
+ï»¿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using AvaloniaTests.Models;
@@ -43,7 +43,7 @@ namespace AvaloniaTests
             {
                 var resultService = sp.GetRequiredService<IResultService>();
                 var dialogService = sp.GetRequiredService<IDialogService>();
-                return (test) => new TestRunnerViewModel(test, resultService, dialogService, Environment.UserName ?? "Ïîëüçîâàòåëü");
+                return (test) => new TestRunnerViewModel(test, resultService, dialogService, Environment.UserName ?? "ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ");
             });
 
             services.AddTransient<Func<TestResult, Test?, ResultViewModel>>(sp =>

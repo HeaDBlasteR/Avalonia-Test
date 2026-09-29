@@ -37,7 +37,7 @@ namespace AvaloniaTests.ViewModels
         {
             _testService = testService;
             _dialogService = dialogService;
-            EditingTest = testToEdit ?? new Test("", "");
+            EditingTest = testToEdit != null ? CreateCopyOfTest(testToEdit) : new Test("", "");
 
             InitializeCommands();
             SetupValidation();
@@ -79,10 +79,38 @@ namespace AvaloniaTests.ViewModels
                 question.Id = Guid.NewGuid();
 
             foreach (var question in EditingTest.Questions)
+            {
+                question.AnswersData = question.Answers.ToList();
                 question.FixCollections();
+            }
 
             _testService.SaveTest(EditingTest);
             RequestClose(true);
+        }
+
+        private static Test CreateCopyOfTest(Test original)
+        {
+            var copy = new Test(original.Title, original.Description) { Id = original.Id };
+
+            foreach (var question in original.Questions)
+            {
+                var questionCopy = new Question(question.Text)
+                {
+                    Id = question.Id,
+                    CorrectAnswerId = question.CorrectAnswerId
+                };
+
+                foreach (var answer in question.Answers)
+                {
+                    questionCopy.Answers.Add(new Answer(answer.Text) { Id = answer.Id });
+                }
+
+                questionCopy.AnswersData = questionCopy.Answers.ToList();
+                copy.Questions.Add(questionCopy);
+            }
+
+            copy.QuestionsData = copy.Questions.ToList();
+            return copy;
         }
 
         private void RequestClose(bool result)

@@ -68,4 +68,8 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="AvaloniaTests.Tests" />
+	</ItemGroup>
 </Project>

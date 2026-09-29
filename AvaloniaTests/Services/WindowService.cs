@@ -1,4 +1,4 @@
-using Avalonia;
+п»їusing Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using AvaloniaTests.Models;
@@ -49,7 +49,7 @@ namespace AvaloniaTests.Services
         {
             var resultService = _serviceProvider.GetRequiredService<IResultService>();
             var dialogService = _serviceProvider.GetRequiredService<IDialogService>();
-            var currentUserName = Environment.UserName ?? "Пользователь";
+            var currentUserName = Environment.UserName ?? "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ";
             var viewModel = new TestRunnerViewModel(test, resultService, dialogService, currentUserName);
             var window = new TestRunnerWindow();
             window.DataContext = viewModel;

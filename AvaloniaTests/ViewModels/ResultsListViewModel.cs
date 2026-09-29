@@ -1,4 +1,4 @@
-using AvaloniaTests.Services;
+п»їusing AvaloniaTests.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ReactiveUI;
@@ -84,7 +84,7 @@ namespace AvaloniaTests.ViewModels
                 {
                     Result = result,
                     Test = test,
-                    TestTitle = test?.Title ?? "Неизвестный тест",
+                    TestTitle = test?.Title ?? "РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РµСЃС‚",
                     UserName = result.UserName,
                     Score = $"{result.Score}/{result.MaxScore}",
                     CompletionDate = result.CompletionDate.ToString("dd.MM.yyyy HH:mm"),

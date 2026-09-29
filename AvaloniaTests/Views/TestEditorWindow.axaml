@@ -160,12 +160,15 @@
                                                         <StackPanel Orientation="Horizontal" 
                                                                     Spacing="10" 
                                                                     Margin="0,5,0,5">
-                                                            <Border Background="{Binding Id, Converter={x:Static converters:EqualityConverter.Instance}, 
-                                                                                 ConverterParameter={Binding $parent[StackPanel].DataContext.CorrectAnswerId},
-                                                                                 FallbackValue=#BDC3C7}"
-                                                                    CornerRadius="10"
+                                                            <Border CornerRadius="10"
                                                                     Width="20"
                                                                     Height="20">
+                                                                <Border.Background>
+                                                                    <MultiBinding Converter="{x:Static converters:EqualityConverter.Instance}">
+                                                                        <Binding Path="Id"/>
+                                                                        <Binding Path="$parent[ItemsControl].DataContext.CorrectAnswerId"/>
+                                                                    </MultiBinding>
+                                                                </Border.Background>
                                                                 <TextBlock Text="✓" 
                                                                            Foreground="White" 
                                                                            FontWeight="Bold"

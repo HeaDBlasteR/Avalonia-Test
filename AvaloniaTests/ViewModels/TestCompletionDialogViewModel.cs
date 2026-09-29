@@ -1,4 +1,4 @@
-using AvaloniaTests.Models;
+ï»¿using AvaloniaTests.Models;
 using ReactiveUI;
 using System;
 using System.Windows.Input;
@@ -9,9 +9,9 @@ namespace AvaloniaTests.ViewModels
     {
         public TestResult Result { get; }
 
-        public string TestCompletedMessage => "Òåñò çàâåðøåí!";
-        public string ScoreMessage => $"Âàø ðåçóëüòàò: {Result.Score} èç {Result.MaxScore}";
-        public string PercentageMessage => $"Ïðîöåíò: {(Result.MaxScore > 0 ? (int)((double)Result.Score / Result.MaxScore * 100) : 0)}%";
+        public string TestCompletedMessage => "Ð¢ÐµÑÑ‚ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½!";
+        public string ScoreMessage => $"Ð’Ð°Ñˆ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚: {Result.Score} Ð¸Ð· {Result.MaxScore}";
+        public string PercentageMessage => $"ÐŸÑ€Ð¾Ñ†ÐµÐ½Ñ‚: {(Result.MaxScore > 0 ? (int)((double)Result.Score / Result.MaxScore * 100) : 0)}%";
 
         public ICommand OkCommand { get; private set; }
 

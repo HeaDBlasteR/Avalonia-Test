@@ -20,8 +20,12 @@ namespace AvaloniaTests.Services
         private readonly string _testFilePath;
 
         public JsonTestService()
+            : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AvaloniaTests"))
         {
-            var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AvaloniaTests");
+        }
+
+        internal JsonTestService(string appDataPath)
+        {
             Directory.CreateDirectory(appDataPath);
             
             _testFilePath = Path.Combine(appDataPath, TESTS_FILE_NAME);

@@ -1,4 +1,4 @@
-using AvaloniaTests.Models;
+ï»¿using AvaloniaTests.Models;
 using ReactiveUI;
 using System;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace AvaloniaTests.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isEditMode, value);
         }
 
-        public string WindowTitle => IsEditMode ? "Ðåäàêòèðîâàíèå âîïðîñà" : "Äîáàâëåíèå âîïðîñà";
+        public string WindowTitle => IsEditMode ? "Ð ÐµÐ´Ð°ÐºÑ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ Ð²Ð¾Ð¿Ñ€Ð¾ÑÐ°" : "Ð”Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð²Ð¾Ð¿Ñ€Ð¾ÑÐ°";
 
         public bool CanRemoveAnswers => EditingQuestion?.Answers?.Count > 2;
 

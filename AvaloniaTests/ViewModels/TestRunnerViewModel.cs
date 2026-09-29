@@ -1,4 +1,4 @@
-using AvaloniaTests.Models;
+п»їusing AvaloniaTests.Models;
 using AvaloniaTests.Services;
 using ReactiveUI;
 using System;
@@ -41,7 +41,7 @@ namespace AvaloniaTests.ViewModels
         public event EventHandler<bool>? CloseRequested;
 
         public TestRunnerViewModel(Test test, IResultService resultService, IDialogService dialogService,
-            string currentUserName = "Пользователь")
+            string currentUserName = "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ")
         {
             _test = test;
             _resultService = resultService;
